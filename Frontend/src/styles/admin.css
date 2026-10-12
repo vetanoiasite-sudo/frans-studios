@@ -1,0 +1,1495 @@
+/* Admin dashboard — neutral, dense, fast to scan. Not meant to match the public site. */
+.adm {
+  --adm-bg: #f5f5f3;
+  --adm-panel: #ffffff;
+  --adm-border: #e2e1dc;
+  --adm-text: #1f2320;
+  --adm-muted: #626860;
+  --adm-accent: #3b4c2e;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas: 'top' 'main';
+  min-height: 100dvh;
+  background: var(--adm-bg);
+  color: var(--adm-text);
+  font-family: var(--sans);
+  font-size: 0.94rem;
+}
+
+@media (min-width: 960px) {
+  .adm {
+    grid-template-columns: 232px 1fr;
+    grid-template-areas: 'top top' 'nav main';
+  }
+}
+
+.adm h1,
+.adm h2,
+.adm h3 {
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.adm h1 {
+  font-size: 1.5rem;
+}
+
+.adm h2 {
+  font-size: 1.02rem;
+}
+
+.adm a {
+  color: var(--adm-accent);
+}
+
+.adm-top {
+  grid-area: top;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-inline: 1rem;
+  background: var(--adm-text);
+  color: #f2f1ec;
+}
+
+.adm-top__menu {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: 1.2rem;
+}
+
+@media (min-width: 960px) {
+  .adm-top__menu {
+    display: none;
+  }
+}
+
+.adm-top__brand {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.adm-top__user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-inline-start: auto;
+}
+
+.adm-top .adm-top__link {
+  color: #d9d8d0;
+  font-size: 0.85rem;
+}
+
+.adm-top__name {
+  color: #b9b8ae;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .adm-top__name,
+  .adm-top__link {
+    display: none;
+  }
+}
+
+.adm-top .adm-btn--quiet {
+  color: #f2f1ec;
+}
+
+.adm-nav {
+  grid-area: nav;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 1rem 0.75rem;
+  background: var(--adm-panel);
+  border-inline-end: 1px solid var(--adm-border);
+}
+
+.adm-nav[data-open='true'] {
+  position: fixed;
+  inset: 56px 0 0 0;
+  z-index: 15;
+  display: flex;
+  overflow-y: auto;
+}
+
+@media (min-width: 960px) {
+  .adm-nav {
+    position: sticky;
+    top: 56px;
+    display: flex;
+    height: calc(100dvh - 56px);
+  }
+
+  .adm-nav[data-open='true'] {
+    position: sticky;
+    inset: auto;
+  }
+}
+
+.adm-nav__group {
+  margin: 1rem 0.75rem 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--adm-muted);
+}
+
+.adm-nav .adm-nav__link {
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  color: var(--adm-text);
+  text-decoration: none;
+}
+
+.adm-nav__link:hover {
+  background: var(--adm-bg);
+}
+
+.adm-nav__link.active {
+  background: color-mix(in srgb, var(--adm-accent) 12%, white);
+  color: var(--adm-accent);
+  font-weight: 600;
+}
+
+.adm-main {
+  grid-area: main;
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 1280px;
+  padding: 1.5rem clamp(1rem, 3vw, 2rem) 4rem;
+  min-width: 0;
+}
+
+/* ── Building blocks ─────────────────────────────────────────────────────── */
+.adm-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.adm-page-head p {
+  margin-top: 0.35rem;
+}
+
+.adm-page-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.adm-back {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.adm-muted {
+  color: var(--adm-muted, var(--muted));
+}
+
+.adm-small {
+  font-size: 0.82rem;
+}
+
+.adm-nowrap {
+  white-space: nowrap;
+}
+
+.adm-ellipsis {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-text-danger {
+  color: var(--danger);
+}
+
+.adm-card {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  background: var(--adm-panel);
+}
+
+.adm-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.adm-stack {
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.adm-columns {
+  display: grid;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .adm-columns {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
+}
+
+.adm-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adm-callout {
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.adm-callout--warn {
+  border-color: color-mix(in srgb, var(--warn) 35%, white);
+  background: color-mix(in srgb, var(--warn) 8%, white);
+}
+
+.adm-callout--danger {
+  border-color: color-mix(in srgb, var(--danger) 35%, white);
+  background: color-mix(in srgb, var(--danger) 7%, white);
+}
+
+.adm-warning {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--warn) 10%, white);
+}
+
+.adm-prose ul {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+}
+
+/* Heading row inside a page (title + action), e.g. Portfolio → Stories. */
+.adm-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.adm-section-head h2 {
+  margin: 0;
+}
+
+/* Buttons */
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 38px;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--adm-border, #ddd);
+  border-radius: 6px;
+  background: var(--adm-panel, white);
+  color: var(--adm-text, #222);
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.adm a.adm-btn {
+  color: var(--adm-text);
+}
+
+.adm-btn:hover {
+  border-color: #bdbcb4;
+}
+
+.adm-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.adm-btn--primary,
+.adm a.adm-btn--primary {
+  border-color: var(--adm-accent, #3b4c2e);
+  background: var(--adm-accent, #3b4c2e);
+  color: white;
+}
+
+.adm-btn--primary:hover {
+  background: #2e3c24;
+}
+
+.adm-btn--quiet {
+  border-color: transparent;
+  background: transparent;
+}
+
+.adm-btn--danger-quiet {
+  border-color: transparent;
+  background: transparent;
+  color: var(--danger);
+}
+
+.adm-btn--small {
+  min-height: 32px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.82rem;
+}
+
+.adm-link-btn {
+  padding: 0.2rem 0.3rem;
+  border: 0;
+  background: none;
+  color: var(--adm-accent);
+  font-size: inherit;
+}
+
+.adm-link-btn:disabled {
+  color: var(--adm-muted);
+  cursor: default;
+}
+
+/* Inputs (admin variant of the shared .field) */
+.adm .field__control,
+.adm-input {
+  min-height: 40px;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--adm-border);
+  border-radius: 6px;
+  background: white;
+  font-size: 0.94rem;
+}
+
+.adm-input--small {
+  min-height: 34px;
+  font-size: 0.85rem;
+}
+
+.adm .field__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.adm-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.adm-filters .adm-input[type='search'] {
+  flex: 1 1 260px;
+}
+
+.adm-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.adm-form__row {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .adm-form__row {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+.adm-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adm-client-select {
+  display: grid;
+  gap: 0.4rem;
+}
+
+/* Badges */
+.adm-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.adm-badge--neutral {
+  background: #ecebe6;
+  color: #4b4f48;
+}
+
+.adm-badge--ok {
+  background: color-mix(in srgb, var(--ok) 15%, white);
+  color: var(--ok);
+}
+
+.adm-badge--warn {
+  background: color-mix(in srgb, var(--warn) 15%, white);
+  color: var(--warn);
+}
+
+.adm-badge--danger {
+  background: color-mix(in srgb, var(--danger) 12%, white);
+  color: var(--danger);
+}
+
+/* Tables */
+.adm-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  background: var(--adm-panel);
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.adm-table th,
+.adm-table td {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--adm-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.adm-table th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--adm-muted);
+  white-space: nowrap;
+}
+
+.adm-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.adm-table tbody tr:hover {
+  background: #fafaf8;
+}
+
+.adm-table--compact td {
+  padding-block: 0.45rem;
+}
+
+.adm-table td.adm-ellipsis {
+  display: table-cell;
+  max-width: 340px;
+}
+
+.adm-row-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.adm-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Dashboard */
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+.adm .adm-stat {
+  display: grid;
+  gap: 0.2rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  background: var(--adm-panel);
+  color: var(--adm-text);
+  text-decoration: none;
+}
+
+.adm-stat__value {
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.adm-stat__label {
+  color: var(--adm-muted);
+  font-size: 0.85rem;
+}
+
+/* Lists */
+.adm-list,
+.adm-activity {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-list li,
+.adm-activity li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--adm-border);
+}
+
+.adm-list li:last-child,
+.adm-activity li:last-child {
+  border-bottom: 0;
+}
+
+.adm-credentials {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.adm-credentials dt {
+  color: var(--adm-muted, var(--muted));
+  font-size: 0.85rem;
+}
+
+.adm-credentials dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.adm-credentials code {
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: #f0efe9;
+  font-size: 1rem;
+}
+
+/* Thumbnails grid (album files, portfolio images) */
+.adm-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-thumb {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.4rem;
+  border: 1px solid var(--adm-border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.adm-thumb--cover {
+  border-color: var(--adm-accent);
+  box-shadow: 0 0 0 1px var(--adm-accent);
+}
+
+.adm-thumb__img {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #ecebe6;
+  color: var(--adm-muted);
+  text-decoration: none;
+}
+
+.adm-thumb__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-thumb__meta {
+  display: grid;
+  min-width: 0;
+}
+
+.adm-thumb__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.adm-thumb__cover {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--adm-accent);
+}
+
+/* Portfolio admin */
+.adm-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm .adm-gallery-card {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  background: var(--adm-panel);
+  color: var(--adm-text);
+  text-decoration: none;
+}
+
+.adm-gallery-card__img {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  background: #ecebe6;
+  color: var(--adm-muted);
+}
+
+.adm-gallery-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-gallery-card__meta {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.8rem;
+}
+
+.adm-dropzone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 120px;
+  padding: 1rem;
+  border: 2px dashed var(--adm-border);
+  border-radius: 8px;
+  background: #fafaf8;
+  text-align: center;
+  cursor: pointer;
+}
+
+.adm-dropzone--small {
+  min-height: 64px;
+}
+
+.adm-dropzone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.adm-film {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 800px) {
+  .adm-film {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.adm-film__media video,
+.adm-film__empty {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  background: #111;
+}
+
+.adm-film__empty {
+  display: grid;
+  place-items: center;
+  color: #999;
+}
+
+/* Inquiries */
+.adm-inquiries {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.adm-inquiry {
+  padding: 0;
+  gap: 0;
+}
+
+.adm-inquiry__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 1rem;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  border: 0;
+  background: none;
+  text-align: start;
+}
+
+@media (min-width: 800px) {
+  .adm-inquiry__head {
+    grid-template-columns: 1.2fr 2fr 1fr auto;
+    align-items: center;
+  }
+}
+
+.adm-inquiry__body {
+  display: grid;
+  gap: 1rem;
+  padding: 0 1.1rem 1.1rem;
+}
+
+.adm-message {
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  background: #f6f5f1;
+  white-space: pre-wrap;
+}
+
+/* Folder picker */
+.adm-picker {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.adm-picker__trail {
+  font-size: 0.88rem;
+}
+
+.adm-picker__list {
+  display: grid;
+  max-height: 46vh;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.adm-picker__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.adm-picker__item:last-child {
+  border-bottom: 0;
+}
+
+.adm-picker__open {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0.2rem 0.4rem;
+  border: 0;
+  background: none;
+  text-align: start;
+}
+
+.adm-picker__open .adm-small {
+  margin-inline-start: auto;
+}
+
+.adm-picker__paste summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.adm-picker__paste-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.adm-picker__paste-row .adm-input {
+  flex: 1;
+}
+
+.adm-folder {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.adm-folder > .adm-btn {
+  justify-self: start;
+}
+
+/* Login */
+.adm-login {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 1rem;
+  background: #f5f5f3;
+}
+
+.adm-login__card {
+  display: grid;
+  gap: 1rem;
+  width: min(380px, 100%);
+  padding: 2rem;
+  border: 1px solid #e2e1dc;
+  border-radius: 10px;
+  background: white;
+  font-family: var(--sans);
+}
+
+.adm-login__card h1 {
+  font-family: var(--sans);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* ── Page covers ── */
+.adm-covers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.adm-cover {
+  display: grid;
+  gap: 12px;
+}
+
+.adm-cover__frame {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, #4a3526, #1f1711);
+  color: rgb(255 255 255 / 0.8);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.adm-cover__frame span {
+  padding: 1rem;
+}
+
+.adm-cover__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.adm-cover .adm-form__actions {
+  margin-top: 0;
+}
+
+/* ── Upload to Google Drive (album page) ── */
+.adm-uploader {
+  display: grid;
+  gap: 1rem;
+}
+
+.adm-uploader__section {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 640px;
+}
+
+.adm-uploader__drop {
+  gap: 0.5rem;
+  min-height: 160px;
+  cursor: default;
+  transition: border-color var(--fast) var(--ease), background var(--fast) var(--ease);
+}
+
+.adm-uploader__drop p {
+  margin: 0;
+}
+
+.adm-uploader__drop.is-dragging {
+  border-color: var(--adm-accent);
+  background: color-mix(in srgb, var(--adm-accent) 6%, white);
+}
+
+.adm-uploader__summary {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.adm-uploader__summary p,
+.adm-uploader .adm-form__actions {
+  margin: 0;
+}
+
+.adm-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--adm-border);
+}
+
+.adm-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--adm-accent);
+  transition: width 200ms linear;
+}
+
+.adm-progress--small {
+  height: 4px;
+}
+
+.adm-uploads {
+  display: grid;
+  max-height: 420px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+}
+
+.adm-uploads__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--adm-border);
+}
+
+.adm-uploads__row:last-child {
+  border-bottom: 0;
+}
+
+.adm-uploads__row.is-error .adm-progress span {
+  background: var(--danger);
+}
+
+.adm-uploads__name {
+  display: grid;
+  min-width: 0;
+}
+
+.adm-uploads__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .adm-uploads__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* New album: create a Drive folder, or use an existing one. */
+.adm-folder-choice {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.adm-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.adm-radio input {
+  margin-top: 0.25rem;
+}
+
+.adm-radio > span {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.adm-root-create {
+  align-items: center;
+  max-width: 480px;
+}
+
+/* Google Drive page: folders inside the album folder. */
+.adm-subhead {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.adm-drive-folders {
+  display: grid;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+}
+
+.adm-drive-folders__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--adm-border);
+}
+
+.adm-drive-folders__row:last-child {
+  border-bottom: 0;
+}
+
+.adm-drive-folders__name {
+  display: flex;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .adm-drive-folders__row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}
+
+.adm-folder__picked {
+  margin: 0;
+}
+
+/* ── Drive files (admin Drive manager) ── */
+.adm-storage {
+  display: grid;
+  gap: 0.4rem;
+  max-width: 560px;
+  margin-bottom: 1rem;
+}
+
+.adm-storage.is-full .adm-progress span {
+  background: var(--danger);
+}
+
+.adm-drive-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.adm-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--adm-border);
+  border-radius: 999px;
+  background: var(--adm-panel);
+}
+
+.adm-tabs button {
+  padding: 0.4rem 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--adm-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.adm-tabs button[aria-selected='true'] {
+  background: var(--adm-accent);
+  color: #fff;
+}
+
+.adm-drive-search {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+.adm-drive {
+  position: relative;
+  display: grid;
+  gap: 0.75rem;
+  transition: box-shadow var(--fast) var(--ease);
+}
+
+.adm-drive.is-dragging {
+  box-shadow: 0 0 0 3px var(--adm-accent);
+}
+
+.adm-drive__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.adm-drive__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.adm-drive__tools {
+  align-items: center;
+  margin: 0;
+}
+
+.adm-drive__drop {
+  margin: 0;
+  padding: 0.75rem;
+  border: 2px dashed var(--adm-accent);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.adm-drive__empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.adm-drive__table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.adm-drive__check {
+  width: 36px;
+}
+
+.adm-drive__col-date {
+  width: 130px;
+}
+
+.adm-drive__col-size {
+  width: 90px;
+}
+
+.adm-drive__actions {
+  width: 48px;
+  text-align: end;
+}
+
+.adm-drive__table tr.is-selected td {
+  background: color-mix(in srgb, var(--adm-accent) 7%, white);
+}
+
+.adm-drive__name {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.adm-drive__name:hover .adm-ellipsis {
+  text-decoration: underline;
+}
+
+.adm-drive__thumb {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--adm-bg);
+  font-size: 1.2rem;
+}
+
+.adm-drive__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-drive__more {
+  justify-self: center;
+}
+
+@media (max-width: 700px) {
+  .adm-drive__col-date,
+  .adm-drive__col-size {
+    display: none;
+  }
+}
+
+/* Row actions menu (⋯). */
+.adm-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.adm-menu > summary {
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  list-style: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.adm-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.adm-menu > summary:hover,
+.adm-menu[open] > summary {
+  background: var(--adm-bg);
+}
+
+.adm-menu__list {
+  position: absolute;
+  z-index: 10;
+  inset-inline-end: 0;
+  display: grid;
+  min-width: 200px;
+  padding: 0.3rem;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  background: var(--adm-panel);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  text-align: start;
+}
+
+.adm-menu__list > a,
+.adm-menu__list > button {
+  padding: 0.5rem 0.7rem;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.adm-menu__list > a:hover,
+.adm-menu__list > button:hover {
+  background: var(--adm-bg);
+}
+
+/* Preview dialog. */
+.adm-preview {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  background: #111;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.adm-preview img,
+.adm-preview video {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+}
+
+/* Floating upload panel (bottom corner). */
+.adm-upload-panel {
+  position: fixed;
+  z-index: 40;
+  inset-block-end: 16px;
+  inset-inline-end: 16px;
+  display: grid;
+  gap: 0.6rem;
+  width: min(440px, calc(100vw - 32px));
+  max-height: 70vh;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--adm-border);
+  border-radius: 12px;
+  background: var(--adm-panel);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.18);
+}
+
+.adm-upload-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+}
+
+.adm-upload-panel__head strong {
+  flex: 1;
+}
+
+.adm-upload-panel .adm-form__actions {
+  margin: 0;
+}
+
+.adm-upload-panel__list {
+  max-height: 40vh;
+}
+
+/* Drive: folders that are client albums. */
+.adm-album-tag {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-inline-start: 50px; /* under the name, past the thumbnail */
+}
+
+.adm-album-tag__label {
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--adm-accent) 12%, white);
+  color: var(--adm-accent);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.adm-album-banner {
+  border-color: var(--adm-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* Menu / tab counters (e.g. new requests). */
+.adm-nav .adm-nav__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.adm-nav__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  margin-inline-start: 0.4rem;
+  padding-inline: 6px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.adm-requests-tabs {
+  margin-bottom: 0.5rem;
+}
+
+.adm-requests-tabs button {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* An album (or albums) still in a previously connected Google account's Drive */
+.adm-drive-move {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.adm-drive-move h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.adm-drive-move p {
+  margin: 0;
+}
+
+.adm-drive-move .adm-form__actions {
+  margin: 0;
+}
+
+.adm-drive-move__list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}

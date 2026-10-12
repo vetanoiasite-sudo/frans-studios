@@ -1,0 +1,28 @@
+# Build output
+bin/
+obj/
+publish/
+Frontend/node_modules/
+Frontend/dist/
+Backend/FransStudios.Api/wwwroot/
+
+# Secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+*.pfx
+appsettings.*.local.json
+appsettings.Production.json
+
+# Local runtime data (media, caches, data-protection keys)
+App_Data/
+*.mdf
+*.ldf
+
+# Tooling
+.vs/
+.vscode/
+.idea/
+*.user
+TestResults/
+.claude/settings.local.json

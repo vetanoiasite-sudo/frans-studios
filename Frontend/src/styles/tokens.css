@@ -1,0 +1,52 @@
+/* Design tokens — derived from the existing brand (olive ink on warm white, Cormorant + DM Sans),
+   with contrast tuned to WCAG AA for body text. */
+:root {
+  /* colour */
+  --paper: #ffffff;          /* site background (Figma: white) */
+  --paper-2: #f4f4f2;        /* image placeholders / soft panels */
+  --surface: #ffffff;
+  --ink: #23281f;
+  --ink-2: #444a3d;
+  --muted: #656a5d;          /* 5.6:1 on white */
+  --stats-ink: #2b2b2b;      /* home stats band (Figma) */
+  --line: #dcd5c8;
+  --line-strong: #c4bba9;
+  --olive: #536941;          /* brand colour, 5.7:1 on --paper */
+  --olive-deep: #3b4c2e;
+  --night: #141612;
+  --night-2: #1e211b;
+  --on-night: #ece7dd;
+  --on-night-muted: #a9a596;
+  --danger: #9c3b2b;
+  --ok: #46663a;
+  --warn: #8a5f16;
+  --focus: #536941;
+
+  /* type */
+  --serif: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
+  --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --step--1: clamp(0.8rem, 0.78rem + 0.1vw, 0.86rem);
+  --step-0: clamp(0.95rem, 0.92rem + 0.15vw, 1.05rem);
+  --step-1: clamp(1.15rem, 1.08rem + 0.35vw, 1.35rem);
+  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2.1rem);
+  --step-3: clamp(2rem, 1.6rem + 1.8vw, 3.2rem);
+  --step-4: clamp(2.6rem, 1.9rem + 3.4vw, 5.2rem);
+
+  /* space */
+  --gutter: clamp(1rem, 0.6rem + 2vw, 2.5rem);
+  --section: clamp(3.5rem, 2.5rem + 5vw, 8rem);
+  --measure: 62ch;
+  --radius: 2px;
+
+  /* motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --fast: 160ms;
+  --slow: 600ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --fast: 0ms;
+    --slow: 0ms;
+  }
+}

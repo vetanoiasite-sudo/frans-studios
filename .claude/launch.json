@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "Backend/FransStudios.Api", "--launch-profile", "https"],
+      "port": 7220,
+      "url": "https://localhost:7220"
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "Frontend"],
+      "port": 5173
+    }
+  ]
+}

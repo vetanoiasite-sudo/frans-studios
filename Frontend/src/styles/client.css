@@ -1,0 +1,827 @@
+/* Private client gallery — quiet, image-first, feels like a finished delivery, not a file browser. */
+
+.cl-shell {
+  min-height: 100dvh;
+  background: var(--paper);
+}
+
+.cl-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 64px;
+  padding-inline: var(--gutter);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+
+.cl-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  text-decoration: none;
+  line-height: 1;
+}
+
+/* FRANS logotype (1402 × 368 PNG). */
+.cl-brand__logo {
+  display: block;
+  width: auto;
+  height: 26px;
+}
+
+.cl-bar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cl-bar__link.active {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.cl-bar__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 5px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.7rem;
+  letter-spacing: 0;
+}
+
+.cl-brand__word {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cl-brand__sub {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.cl-brand--large .cl-brand__word {
+  font-size: 2.1rem;
+}
+
+.cl-brand--large .cl-brand__logo {
+  height: 40px;
+}
+
+.cl-bar__user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.cl-bar__name {
+  overflow: hidden;
+  font-size: var(--step--1);
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cl-bar__logout {
+  min-height: 40px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .cl-bar__name {
+    display: none;
+  }
+
+  .cl-brand__logo {
+    height: 20px;
+  }
+}
+
+.cl-main {
+  padding-bottom: var(--section);
+}
+
+/* ── Login ───────────────────────────────────────────────────────────────── */
+.cl-login {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--gutter);
+  background:
+    radial-gradient(ellipse at top, color-mix(in srgb, var(--olive) 10%, transparent), transparent 60%),
+    var(--paper);
+}
+
+.cl-login__panel {
+  display: grid;
+  gap: 1rem;
+  width: min(420px, 100%);
+  text-align: center;
+}
+
+.cl-login__panel .cl-brand {
+  justify-self: center;
+  margin-bottom: 1.5rem;
+}
+
+.cl-login__title {
+  font-size: var(--step-3);
+  font-weight: 300;
+}
+
+.cl-login__subtitle {
+  color: var(--ink-2);
+}
+
+.cl-login__form {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1.5rem;
+  text-align: start;
+}
+
+.cl-login__form .btn {
+  margin-top: 0.5rem;
+}
+
+.cl-login__help {
+  margin-top: 1.5rem;
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* ── Dashboard (several albums) ──────────────────────────────────────────── */
+.cl-dashboard {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: clamp(2.5rem, 6vw, 5rem) var(--gutter) 0;
+}
+
+.cl-dashboard__head {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  margin-bottom: clamp(2rem, 4.5vw, 3.75rem);
+  text-align: center;
+}
+
+.cl-eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cl-dashboard__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 1.8rem + 2.6vw, 4rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.cl-dashboard__lead {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.cl-empty {
+  max-width: 36rem;
+  margin: 3rem auto;
+  padding-inline: var(--gutter);
+  font-family: var(--serif);
+  font-size: var(--step-2);
+  font-style: italic;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Gallery cards: one column on phones, two from tablets, three on wide screens (two when there are two). */
+.cl-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 3vw, 2.5rem) clamp(1rem, 2vw, 1.75rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .cl-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1180px) {
+  .cl-cards:not(.cl-cards--two) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.cl-card {
+  display: grid;
+  gap: 0.85rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.cl-card__media {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.cl-cards--two .cl-card__media {
+  aspect-ratio: 4 / 3;
+}
+
+.cl-card__media img,
+.cl-card__placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+
+.cl-card__placeholder {
+  display: grid;
+  place-items: center;
+  padding-bottom: 3rem;
+  background: linear-gradient(160deg, #2a2a28, #141412);
+  color: rgb(255 255 255 / 0.55);
+}
+
+.cl-card:hover .cl-card__media img {
+  transform: scale(1.035);
+}
+
+/* Title set on the photo, over a soft shade so it reads on any image. */
+.cl-card__overlay {
+  position: absolute;
+  inset: auto 0 0;
+  padding: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 2.5vw, 1.5rem) clamp(0.9rem, 2vw, 1.25rem);
+  background: linear-gradient(to top, rgb(0 0 0 / 0.6), transparent);
+  color: #fff;
+}
+
+.cl-card__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.cl-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+
+.cl-card__summary {
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.cl-card__cta {
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cl-card__cta span {
+  display: inline-block;
+  transition: transform var(--fast) var(--ease);
+}
+
+.cl-card:hover .cl-card__cta span {
+  transform: translateX(4px);
+}
+
+.cl-card--compact .cl-card__title {
+  font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.75rem);
+}
+
+/* "Your other galleries" under an album. */
+.cl-more {
+  max-width: 1320px;
+  margin: clamp(3.5rem, 8vw, 6rem) auto 0;
+  padding: clamp(2rem, 5vw, 3.5rem) var(--gutter) 0;
+  border-top: 1px solid var(--line);
+}
+
+.cl-more__title {
+  margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 1.4rem + 1.4vw, 2.6rem);
+  font-weight: 400;
+  text-align: center;
+}
+
+/* ── Album ───────────────────────────────────────────────────────────────── */
+.cl-cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(340px, 62svh, 820px);
+  padding: 4rem var(--gutter);
+  color: var(--on-night);
+  background: var(--night);
+  overflow: hidden;
+  text-align: center;
+}
+
+.cl-cover__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.72;
+}
+
+.cl-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.15), rgb(0 0 0 / 0.55));
+}
+
+.cl-cover__content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  max-width: 900px;
+}
+
+.cl-cover__title {
+  font-size: clamp(2.6rem, 1.6rem + 5vw, 6.5rem);
+  font-weight: 300;
+  line-height: 0.95;
+}
+
+.cl-cover__counts {
+  font-size: var(--step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--on-night) 85%, transparent);
+}
+
+.cl-album__description {
+  max-width: var(--measure);
+  margin: clamp(2rem, 5vw, 3.5rem) auto 0;
+  padding-inline: var(--gutter);
+  font-family: var(--serif);
+  font-size: var(--step-1);
+  text-align: center;
+  color: var(--ink-2);
+}
+
+.cl-toolbar {
+  position: sticky;
+  top: 64px;
+  z-index: 30;
+  margin-top: clamp(1.5rem, 4vw, 3rem);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  border-block: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+}
+
+.cl-toolbar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  max-width: 1680px;
+  margin-inline: auto;
+  padding: 0.6rem var(--gutter);
+}
+
+.cl-toolbar__zip {
+  margin-inline-start: auto;
+}
+
+/* Phones: tabs take the full first row and scroll; the ZIP button becomes an icon. */
+@media (max-width: 640px) {
+  .cl-toolbar__inner {
+    gap: 0.5rem 0.75rem;
+    padding-block: 0.5rem;
+  }
+
+  .cl-tabs {
+    order: 3;
+    flex: 1 0 100%;
+  }
+
+  .cl-toolbar__zip-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .cl-toolbar__zip {
+    width: 40px;
+    min-height: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* Gallery switcher ("Gallery: title ▾"). */
+.cl-switcher {
+  position: relative;
+  min-width: 0;
+}
+
+.cl-switcher__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: min(60vw, 420px);
+  min-height: 40px;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  list-style: none;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+
+.cl-switcher__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.cl-switcher__label {
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+.cl-switcher__current {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cl-switcher[open] .cl-switcher__toggle svg {
+  transform: rotate(180deg);
+}
+
+.cl-switcher__menu {
+  position: absolute;
+  z-index: 50;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-start: 0;
+  display: grid;
+  gap: 2px;
+  width: min(380px, calc(100vw - 2 * var(--gutter)));
+  max-height: 60vh;
+  padding: 0.4rem;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.14);
+}
+
+.cl-switcher__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.cl-switcher__item:hover,
+.cl-switcher__item[aria-current='page'] {
+  background: var(--paper-2);
+}
+
+.cl-switcher__thumb {
+  flex: none;
+  width: 56px;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--paper-2);
+}
+
+.cl-switcher__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cl-switcher__text {
+  display: grid;
+  min-width: 0;
+  font-size: var(--step--1);
+}
+
+.cl-switcher__text strong {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cl-switcher__text span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.cl-switcher__all {
+  padding: 0.6rem 0.5rem 0.4rem;
+  border-top: 1px solid var(--line);
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cl-tabs {
+  display: flex;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.cl-tab {
+  min-height: 40px;
+  padding: 0.4rem 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.cl-tab span {
+  margin-inline-start: 0.35em;
+  color: var(--muted);
+}
+
+.cl-tab[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.cl-tab[aria-pressed='true'] span {
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+}
+
+.cl-note {
+  max-width: 1680px;
+  margin: 1rem auto 0;
+  padding-inline: var(--gutter);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* Justified rows without JavaScript: each tile grows in proportion to its aspect ratio (--r). */
+.cl-grid {
+  --row: 260px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(4px, 0.6vw, 8px);
+  max-width: 1680px;
+  margin: clamp(1rem, 2vw, 1.5rem) auto 0;
+  padding: 0 clamp(4px, 1vw, 1rem);
+  list-style: none;
+}
+
+.cl-grid::after {
+  content: '';
+  flex-grow: 1000000;
+}
+
+@media (max-width: 640px) {
+  .cl-grid {
+    --row: 150px;
+  }
+}
+
+.cl-tile {
+  position: relative;
+  flex: calc(var(--r) * 100) 1 calc(var(--r) * var(--row));
+  aspect-ratio: var(--r);
+  background: var(--paper-2);
+  overflow: hidden;
+}
+
+.cl-tile__open {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.cl-tile__open img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--slow) var(--ease), filter var(--fast) var(--ease);
+}
+
+.cl-tile:hover .cl-tile__open img {
+  transform: scale(1.02);
+}
+
+.cl-tile__fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: var(--step--1);
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.cl-tile__video {
+  position: absolute;
+  inset-block-end: 0.6rem;
+  inset-inline-start: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem 0.25rem 0.4rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.55);
+  color: white;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-tile__download {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity var(--fast) var(--ease);
+}
+
+.cl-tile:hover .cl-tile__download,
+.cl-tile:focus-within .cl-tile__download {
+  opacity: 1;
+}
+
+/* Touch screens have no hover: keep the download button visible. */
+@media (hover: none) {
+  .cl-tile__download {
+    opacity: 1;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.cl-files {
+  max-width: 1100px;
+  margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+  padding-inline: var(--gutter);
+}
+
+.cl-files__title {
+  margin-bottom: 1rem;
+  font-size: var(--step-2);
+}
+
+.cl-files ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.cl-file {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cl-file__ext {
+  min-width: 3.25rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--muted);
+}
+
+.cl-file__name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cl-file__size {
+  font-size: var(--step--1);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-file .btn {
+  grid-column: 2 / -1;
+  justify-self: start;
+}
+
+@media (min-width: 640px) {
+  .cl-file {
+    grid-template-columns: auto 1fr auto auto;
+  }
+
+  .cl-file .btn {
+    grid-column: auto;
+  }
+}
+
+.cl-sentinel {
+  height: 1px;
+}
+
+.cl-lightbox-download {
+  display: inline-grid;
+  place-items: center;
+  color: var(--yarl__color_button, rgb(255 255 255 / 0.8));
+}
+
+.cl-lightbox-download:hover {
+  color: white;
+}
+
+/* Lightbox: "HEIC" = download the original iPhone file (the main button gives a JPG). */
+.cl-lightbox-original {
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--yarl__color_button, rgb(255 255 255 / 0.8));
+}
+
+.cl-lightbox-original:hover {
+  color: white;
+}
