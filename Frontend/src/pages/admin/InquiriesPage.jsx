@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router'
 import { api } from '../../services/api.js'
 import { useApi } from '../../hooks/useApi.js'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { PageHeader, Pagination, StatusBadge } from '../../components/admin/AdminUi.jsx'
+import { ErrorBanner, Notice, PageHeader, Pagination, StatusBadge } from '../../components/admin/AdminUi.jsx'
 import { formatDate, formatDateTime } from '../../utils/format.js'
 
 const statuses = ['new', 'contacted', 'booked', 'closed']
@@ -24,11 +24,27 @@ export default function InquiriesPage() {
   const { data: counts } = useApi('/api/admin/inquiries/counts', { v: countsVersion })
   const tab = tabs.find((t) => t.origin === origin)
   const [open, setOpen] = useState(null)
+  // The request whose status is being saved, and how the last change went: { id, notice } or { id, error }.
+  const [saving, setSaving] = useState(null)
+  const [result, setResult] = useState(null)
 
+  // Shown as changed right away; put back as it was if the server doesn't save it.
   async function setStatus(inquiry, next) {
-    setData((d) => ({ ...d, items: d.items.map((i) => (i.id === inquiry.id ? { ...i, status: next } : i)) }))
-    await api(`/api/admin/inquiries/${inquiry.id}`, { method: 'PUT', body: { status: next } })
-    setCountsVersion((v) => v + 1)
+    const previous = inquiry.status
+    const setLocal = (value) => setData((d) => ({ ...d, items: d.items.map((i) => (i.id === inquiry.id ? { ...i, status: value } : i)) }))
+    setLocal(next)
+    setSaving(inquiry.id)
+    setResult(null)
+    try {
+      await api(`/api/admin/inquiries/${inquiry.id}`, { method: 'PUT', body: { status: next } })
+      setResult({ id: inquiry.id, notice: `Saved: marked as ${next}.` })
+      setCountsVersion((v) => v + 1)
+    } catch (err) {
+      setLocal(previous)
+      setResult({ id: inquiry.id, error: err })
+    } finally {
+      setSaving(null)
+    }
   }
 
   return (
@@ -106,11 +122,20 @@ export default function InquiriesPage() {
                     {i.message && <p className="adm-message">{i.message}</p>}
                     <div className="adm-form__actions">
                       {statuses.map((s) => (
-                        <button key={s} type="button" className={s === i.status ? 'adm-btn adm-btn--small adm-btn--primary' : 'adm-btn adm-btn--small'} onClick={() => setStatus(i, s)}>
+                        <button
+                          key={s}
+                          type="button"
+                          className={s === i.status ? 'adm-btn adm-btn--small adm-btn--primary' : 'adm-btn adm-btn--small'}
+                          disabled={saving === i.id}
+                          onClick={() => setStatus(i, s)}
+                        >
                           {s}
                         </button>
                       ))}
                     </div>
+                    {saving === i.id && <p className="adm-muted adm-small">Saving…</p>}
+                    <Notice>{result?.id === i.id && result.notice}</Notice>
+                    {result?.id === i.id && <ErrorBanner error={result.error} />}
                   </div>
                 )}
               </li>

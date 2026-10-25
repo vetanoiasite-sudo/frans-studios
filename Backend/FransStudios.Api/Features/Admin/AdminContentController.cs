@@ -1,4 +1,5 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using FransStudios.Api.Authentication;
 using FransStudios.Api.Configuration;
 using FransStudios.Api.Data;
@@ -439,8 +440,10 @@ public sealed record UpdateInquiryRequest(InquiryStatus Status);
 public sealed record DashboardDto(int ActiveClients, int PublishedAlbums, int DraftAlbums, int NewInquiries,
     int AlbumsWithSyncErrors, bool DriveConnected, string? DriveAccount, IReadOnlyList<Inquiry> RecentInquiries);
 
-public sealed record AuditDto(long Id, string Action, string? Username, string? EntityType, string? EntityId, string? IpAddress,
-    string? Details, DateTime CreatedAt);
+/// <param name="ClientName">The client's name when a client did it (the studio's own actions have none).</param>
+/// <param name="Subject">Name of the album or client it was about, looked up now (deleted ones too), or null.</param>
+public sealed record AuditDto(long Id, string Action, string? Username, string? ClientName, string? EntityType, string? EntityId,
+    string? Subject, string? IpAddress, string? Details, DateTime CreatedAt);
 
 public sealed record InquiryCountsDto(int PackagesNew, int ContactNew, int PackagesTotal, int ContactTotal);
 
@@ -501,14 +504,63 @@ public sealed class AdminOverviewController(AppDbContext db, DriveTokenService d
         return n == 0 ? this.NotFoundProblem("Inquiry not found.") : NoContent();
     }
 
+    /// <summary>Activity log filters (<c>category</c>): the actions each one covers, as prefixes.</summary>
+    private static readonly Dictionary<string, string[]> AuditCategories = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["signins"] = ["login.", "logout", "password.changed"],
+        ["downloads"] = ["file.downloaded", "section.downloaded"],
+        ["uploads"] = ["file.uploaded"],
+        ["clients"] = ["client.", "password.reset"],
+        ["albums"] = ["album."],
+        ["drive"] = ["drive."],
+    };
+
     [HttpGet("audit")]
-    public Task<Paged<AuditDto>> Audit(string? action, int? userId, int page = 1, int pageSize = 50, CancellationToken ct = default)
+    public async Task<Paged<AuditDto>> Audit(string? category, string? action, int? userId, int page = 1, int pageSize = 50,
+        CancellationToken ct = default)
     {
         var q = db.AuditLogs.AsNoTracking();
+        if (category is not null && AuditCategories.TryGetValue(category, out var prefixes)) q = q.Where(ActionStartsWithAny(prefixes));
         if (!string.IsNullOrWhiteSpace(action)) q = q.Where(a => a.Action.StartsWith(action));
         if (userId is not null) q = q.Where(a => a.UserId == userId);
-        return q.OrderByDescending(a => a.Id)
-            .Select(a => new AuditDto(a.Id, a.Action, a.User != null ? a.User.Username : null, a.EntityType, a.EntityId, a.IpAddress, a.Details, a.CreatedAt))
+        var rows = await q.OrderByDescending(a => a.Id)
+            .Select(a => new
+            {
+                a.Id, a.Action, a.EntityType, a.EntityId, a.IpAddress, a.Details, a.CreatedAt,
+                Username = a.User != null ? a.User.Username : null,
+                ClientName = a.User != null && a.User.Client != null ? a.User.Client.FullName : null,
+            })
             .ToPagedAsync(page, pageSize, ct);
+
+        // Names of the albums and clients on this page, so the log reads "Kim & Minaj — Wedding" rather than "Album #5".
+        var albumIds = rows.Items.Where(r => r.EntityType == "Album").Select(r => int.TryParse(r.EntityId, out var id) ? id : 0).ToHashSet();
+        var clientIds = rows.Items.Where(r => r.EntityType == "Client").Select(r => int.TryParse(r.EntityId, out var id) ? id : 0).ToHashSet();
+        var fileIds = rows.Items.Where(r => r.EntityType == "AlbumFile").Select(r => Guid.TryParse(r.EntityId, out var id) ? id : Guid.Empty).ToHashSet();
+        var albums = await db.Albums.IgnoreQueryFilters().AsNoTracking().Where(a => albumIds.Contains(a.Id)).ToDictionaryAsync(a => a.Id.ToString(), a => a.Title, ct);
+        var clients = await db.Clients.IgnoreQueryFilters().AsNoTracking().Where(c => clientIds.Contains(c.Id)).ToDictionaryAsync(c => c.Id.ToString(), c => c.FullName, ct);
+        var fileAlbums = await db.AlbumFiles.IgnoreQueryFilters().AsNoTracking().Where(f => fileIds.Contains(f.Id))
+            .ToDictionaryAsync(f => f.Id.ToString(), f => f.Album.Title, ct);
+        string? SubjectOf(string? type, string? id) => id is null ? null : type switch
+        {
+            "Album" => albums.GetValueOrDefault(id),
+            "Client" => clients.GetValueOrDefault(id),
+            "AlbumFile" => fileAlbums.GetValueOrDefault(id),
+            _ => null,
+        };
+
+        return new Paged<AuditDto>(rows.Items.Select(r => new AuditDto(r.Id, r.Action, r.Username, r.ClientName, r.EntityType, r.EntityId,
+            SubjectOf(r.EntityType, r.EntityId), r.IpAddress, r.Details, r.CreatedAt)).ToList(), rows.Total, rows.Page, rows.PageSize);
+    }
+
+    /// <summary><c>a => a.Action.StartsWith(p1) || a.Action.StartsWith(p2) || …</c>, translated to SQL LIKE.</summary>
+    private static Expression<Func<AuditLog, bool>> ActionStartsWithAny(IEnumerable<string> prefixes)
+    {
+        var a = Expression.Parameter(typeof(AuditLog), "a");
+        var action = Expression.Property(a, nameof(AuditLog.Action));
+        var startsWith = typeof(string).GetMethod(nameof(string.StartsWith), [typeof(string)])!;
+        var body = prefixes
+            .Select(p => (Expression)Expression.Call(action, startsWith, Expression.Constant(p)))
+            .Aggregate(Expression.OrElse);
+        return Expression.Lambda<Func<AuditLog, bool>>(body, a);
     }
 }

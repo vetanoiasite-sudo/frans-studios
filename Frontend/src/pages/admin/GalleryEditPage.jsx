@@ -5,17 +5,35 @@ import { useApi } from '../../hooks/useApi.js'
 import { Checkbox, Field } from '../../components/ui/Field.jsx'
 import { ConfirmDialog } from '../../components/ui/Dialog.jsx'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { ErrorBanner, PageHeader } from '../../components/admin/AdminUi.jsx'
+import { ErrorBanner, Notice, PageHeader } from '../../components/admin/AdminUi.jsx'
 
-function ImageItem({ galleryId, image, isCover, index, count, onMove, onChanged }) {
+function ImageItem({ galleryId, image, isCover, index, count, onMove, onChanged, onError }) {
   const [alt, setAlt] = useState(image.altText)
-  const [state, setState] = useState('idle')
+  const [state, setState] = useState('idle') // idle | saving | saved | failed
+  const [busy, setBusy] = useState(false)
 
   async function saveAlt() {
     if (alt === image.altText) return
     setState('saving')
-    await api(`/api/admin/galleries/${galleryId}/images/${image.id}`, { method: 'PUT', body: { altText: alt } })
-    setState('saved')
+    try {
+      await api(`/api/admin/galleries/${galleryId}/images/${image.id}`, { method: 'PUT', body: { altText: alt } })
+      setState('saved')
+    } catch (err) {
+      setState('failed')
+      onError(err)
+    }
+  }
+
+  async function act(request) {
+    setBusy(true)
+    try {
+      await request()
+      onChanged()
+    } catch (err) {
+      onError(err)
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -24,7 +42,9 @@ function ImageItem({ galleryId, image, isCover, index, count, onMove, onChanged 
         <img src={`${image.image.src}/${image.image.widths[0]}.webp`} alt="" loading="lazy" />
       </div>
       <input className="adm-input adm-input--small" aria-label="Alt text (describes the photo for search engines and screen readers)" placeholder="Describe the photo…" value={alt} onChange={(e) => setAlt(e.target.value)} onBlur={saveAlt} />
+      {state === 'saving' && <span className="adm-muted adm-small">Saving…</span>}
       {state === 'saved' && <span className="adm-muted adm-small">Saved</span>}
+      {state === 'failed' && <span className="adm-small adm-text-danger">Not saved</span>}
       <div className="adm-thumb__actions">
         <button type="button" className="adm-link-btn" disabled={index === 0} onClick={() => onMove(index, -1)} aria-label="Move earlier">
           ←
@@ -35,16 +55,22 @@ function ImageItem({ galleryId, image, isCover, index, count, onMove, onChanged 
         {isCover ? (
           <span className="adm-thumb__cover">Cover</span>
         ) : (
-          <button type="button" className="adm-link-btn adm-small" onClick={() => api(`/api/admin/galleries/${galleryId}/cover`, { method: 'PUT', body: { imageId: image.id } }).then(onChanged)}>
+          <button
+            type="button"
+            className="adm-link-btn adm-small"
+            disabled={busy}
+            onClick={() => act(() => api(`/api/admin/galleries/${galleryId}/cover`, { method: 'PUT', body: { imageId: image.id } }))}
+          >
             Cover
           </button>
         )}
         <button
           type="button"
           className="adm-link-btn adm-small adm-text-danger"
-          onClick={() => window.confirm('Delete this image from the website?') && api(`/api/admin/galleries/${galleryId}/images/${image.id}`, { method: 'DELETE' }).then(onChanged)}
+          disabled={busy}
+          onClick={() => window.confirm('Delete this image from the website?') && act(() => api(`/api/admin/galleries/${galleryId}/images/${image.id}`, { method: 'DELETE' }))}
         >
-          Delete
+          {busy ? 'Working…' : 'Delete'}
         </button>
       </div>
     </li>
@@ -57,8 +83,12 @@ export default function GalleryEditPage() {
   const { data: g, error, loading, reload, setData } = useApi(`/api/admin/galleries/${id}`)
   const [form, setForm] = useState(null)
   const [saveError, setSaveError] = useState(null)
+  const [notice, setNotice] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [imagesError, setImagesError] = useState(null)
   const [progress, setProgress] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const fileInput = useRef(null)
 
   useEffect(() => {
@@ -86,14 +116,19 @@ export default function GalleryEditPage() {
   async function save(e) {
     e.preventDefault()
     setSaveError(null)
+    setNotice(null)
+    setSaving(true)
     try {
       await api(`/api/admin/galleries/${id}`, {
         method: 'PUT',
         body: { ...form, location: form.location || null, eventDate: form.eventDate || null, sortOrder: Number(form.sortOrder) || 0 },
       })
-      navigate('/admin/portfolio')
+      setNotice(form.isPublished ? 'Saved. The story is on the website (it can take up to a minute to appear there).' : 'Saved. The story is hidden from the website.')
+      reload()
     } catch (err) {
       setSaveError(err)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -117,17 +152,32 @@ export default function GalleryEditPage() {
     }
   }
 
+  // Shown in the new order right away; put back if the server doesn't save it.
   async function move(index, delta) {
+    const before = g
     const images = [...g.images]
     const [item] = images.splice(index, 1)
     images.splice(index + delta, 0, item)
     setData({ ...g, images })
-    await api(`/api/admin/galleries/${id}/images/order`, { method: 'PUT', body: { ids: images.map((x) => x.id) } })
+    setImagesError(null)
+    try {
+      await api(`/api/admin/galleries/${id}/images/order`, { method: 'PUT', body: { ids: images.map((x) => x.id) } })
+    } catch (err) {
+      setData(before)
+      setImagesError(err)
+    }
   }
 
   async function remove() {
-    await api(`/api/admin/galleries/${id}`, { method: 'DELETE' })
-    navigate('/admin/portfolio', { replace: true })
+    setDeleting(true)
+    try {
+      await api(`/api/admin/galleries/${id}`, { method: 'DELETE' })
+      navigate('/admin/portfolio', { replace: true })
+    } catch (err) {
+      setSaveError(err)
+      setDeleting(false)
+      setConfirmDelete(false)
+    }
   }
 
   return (
@@ -151,6 +201,7 @@ export default function GalleryEditPage() {
         <form className="adm-card adm-form" onSubmit={save}>
           <h2>Story details</h2>
           <ErrorBanner error={saveError} />
+          <Notice>{notice}</Notice>
           <Field label="Title" required value={form.title} onChange={set('title')} />
           <Field label="Page address" hint={`fransstudios.com/portfolio/${form.slug}`} required value={form.slug} onChange={set('slug')} error={saveError?.fieldErrors?.slug} />
           <div className="adm-form__row">
@@ -171,8 +222,8 @@ export default function GalleryEditPage() {
           <Checkbox label="Published" hint="Visible on the website." checked={form.isPublished} onChange={set('isPublished')} />
           <Checkbox label="Featured" hint="Shown on the homepage." checked={form.isFeatured} onChange={set('isFeatured')} />
           <div className="adm-form__actions">
-            <button type="submit" className="adm-btn adm-btn--primary">
-              Save
+            <button type="submit" className="adm-btn adm-btn--primary" disabled={saving}>
+              {saving ? 'Saving…' : 'Save'}
             </button>
             <button type="button" className="adm-btn adm-btn--danger-quiet" onClick={() => setConfirmDelete(true)}>
               Delete story
@@ -198,12 +249,23 @@ export default function GalleryEditPage() {
 
       <section className="adm-card">
         <h2>Images ({g.images.length})</h2>
+        <ErrorBanner error={imagesError} />
         {g.images.length === 0 ? (
           <p className="adm-muted">No images yet.</p>
         ) : (
           <ul className="adm-thumbs" role="list">
             {g.images.map((img, i) => (
-              <ImageItem key={img.id} galleryId={id} image={img} isCover={g.coverImageId === img.id || (!g.coverImageId && i === 0)} index={i} count={g.images.length} onMove={move} onChanged={reload} />
+              <ImageItem
+                key={img.id}
+                galleryId={id}
+                image={img}
+                isCover={g.coverImageId === img.id || (!g.coverImageId && i === 0)}
+                index={i}
+                count={g.images.length}
+                onMove={move}
+                onChanged={() => (setImagesError(null), reload())}
+                onError={setImagesError}
+              />
             ))}
           </ul>
         )}
@@ -215,6 +277,7 @@ export default function GalleryEditPage() {
         message="The story and all its uploaded images are removed from the website."
         confirmLabel="Delete"
         danger
+        busy={deleting}
         onConfirm={remove}
         onCancel={() => setConfirmDelete(false)}
       />

@@ -5,7 +5,7 @@ import { useApi } from '../../hooks/useApi.js'
 import { Dialog, ConfirmDialog } from '../../components/ui/Dialog.jsx'
 import { Checkbox, Field } from '../../components/ui/Field.jsx'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { AlbumStatusBadge, ErrorBanner, PageHeader } from '../../components/admin/AdminUi.jsx'
+import { AlbumStatusBadge, ErrorBanner, Notice, PageHeader } from '../../components/admin/AdminUi.jsx'
 import { ClientSelect } from '../../components/admin/ClientSelect.jsx'
 import { DriveFolderPicker } from '../../components/admin/DriveFolderPicker.jsx'
 import { DriveUploadPanel } from '../../components/admin/DriveUploadPanel.jsx'
@@ -508,7 +508,7 @@ export default function DrivePage() {
           </div>
         )}
         <ErrorBanner error={error} />
-        {notice && <p className="form-success">{notice}</p>}
+        <Notice>{notice}</Notice>
         {dragging && <p className="adm-drive__drop">Drop to upload into “{currentName}”</p>}
 
         {pages.error?.status === 503 ? (

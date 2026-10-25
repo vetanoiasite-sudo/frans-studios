@@ -12,9 +12,12 @@ export default function AdminLoginPage() {
   const [form, setForm] = useState({ username: '', password: '' })
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
+  // The admin page that sent here (see RequireRole). Once signed in, this render sends them back to it.
+  const from = location.state?.from
+  const target = from?.startsWith('/admin') ? from : '/admin'
 
   if (status === 'loading') return <Spinner fullScreen />
-  if (user?.role === 'admin') return <Navigate to="/admin" replace />
+  if (user?.role === 'admin') return <Navigate to={target} replace />
 
   async function submit(e) {
     e.preventDefault()
@@ -22,12 +25,7 @@ export default function AdminLoginPage() {
     setError(null)
     try {
       const me = await login(form.username, form.password)
-      if (me.role !== 'admin') {
-        navigate('/client', { replace: true })
-        return
-      }
-      const from = location.state?.from
-      navigate(from?.startsWith('/admin') ? from : '/admin', { replace: true })
+      navigate(me.role === 'admin' ? target : '/client', { replace: true })
     } catch (err) {
       setError(err.problem?.detail ?? err.message)
       setBusy(false)

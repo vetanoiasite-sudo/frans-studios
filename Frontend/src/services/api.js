@@ -83,7 +83,14 @@ export async function api(path, { method = 'GET', body, form, signal, query } = 
     })
   }
 
-  let response = await send(false)
+  let response
+  try {
+    response = await send(false)
+  } catch (err) {
+    if (err.name === 'AbortError') throw err
+    // No response at all (offline, server down): say so in plain words rather than the browser's "Failed to fetch".
+    throw new ApiError(0, { title: 'Couldn’t reach the server. Check your internet connection and try again.' })
+  }
   // Stale token: get a fresh one and retry once.
   if (unsafe && (await isCsrfRejection(response))) response = await send(true)
 

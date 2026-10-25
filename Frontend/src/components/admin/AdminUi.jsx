@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Dialog } from '../ui/Dialog.jsx'
 
 const albumStatus = {
@@ -99,11 +99,44 @@ export function CredentialsDialog({ credentials, onClose, title = 'Client login 
   )
 }
 
+/**
+ * Brings a message that just appeared into view. Forms put their result at the top, so on a long page the Save
+ * button at the bottom would otherwise "do nothing" while the message shows off-screen.
+ */
+function useRevealOnChange(value) {
+  const ref = useRef(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!value || !el) return
+    el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    // A smooth scroll can be cut short when the page moves meanwhile (e.g. images still loading): then jump.
+    const check = setTimeout(() => {
+      const r = el.getBoundingClientRect()
+      const topBar = (parseFloat(getComputedStyle(el).scrollMarginTop) || 0) - 20 // under the sticky top bar counts as hidden
+      if (r.top < topBar || r.bottom > window.innerHeight) el.scrollIntoView({ block: 'nearest' })
+    }, 700)
+    return () => clearTimeout(check)
+  }, [value])
+  return ref
+}
+
+/** The green "Saved." line after an action; shown only when there is a message. */
+export function Notice({ children }) {
+  const ref = useRevealOnChange(children)
+  if (!children) return null
+  return (
+    <p ref={ref} className="form-success" role="status">
+      {children}
+    </p>
+  )
+}
+
 export function ErrorBanner({ error }) {
+  const ref = useRevealOnChange(error)
   if (!error) return null
   const fields = Object.values(error.fieldErrors ?? {}).flat()
   return (
-    <div className="form-error" role="alert">
+    <div ref={ref} className="form-error" role="alert">
       <p>{error.message}</p>
       {fields.length > 0 && (
         <ul>

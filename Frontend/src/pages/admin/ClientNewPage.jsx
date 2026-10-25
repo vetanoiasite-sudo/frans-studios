@@ -6,6 +6,11 @@ import { Field, Checkbox } from '../../components/ui/Field.jsx'
 import { CredentialsDialog, ErrorBanner, PageHeader } from '../../components/admin/AdminUi.jsx'
 import { DriveFolderPicker } from '../../components/admin/DriveFolderPicker.jsx'
 
+/** What the album is of; it ends the suggested album title ("Sara & Ahmed — Wedding"). "" = just the name. */
+const occasions = ['Wedding', 'Engagement', 'Proposal', 'Birthday', 'Photo session']
+
+const suggestTitle = (name, occasion) => (!name ? '' : occasion ? `${name} — ${occasion}` : name)
+
 /** Suggests "sara.ahmed" from "Sara Ahmed". */
 function suggestUsername(name) {
   return name
@@ -32,6 +37,7 @@ export default function ClientNewPage() {
   const [albumMode, setAlbumMode] = useState('create')
   const [albumTitle, setAlbumTitle] = useState('')
   const [titleTouched, setTitleTouched] = useState(false)
+  const [occasion, setOccasion] = useState(occasions[0])
   const [folder, setFolder] = useState(null) // { id, label }
   const [picker, setPicker] = useState(false)
   const [album, setAlbum] = useState(null)
@@ -45,7 +51,7 @@ export default function ClientNewPage() {
       [name]: value,
       ...(name === 'fullName' && !usernameTouched ? { username: suggestUsername(value) } : {}),
     }))
-    if (name === 'fullName' && !titleTouched) setAlbumTitle(value ? `${value} — Wedding` : '')
+    if (name === 'fullName' && !titleTouched) setAlbumTitle(suggestTitle(value, occasion))
   }
 
   async function submit(e) {
@@ -162,17 +168,39 @@ export default function ClientNewPage() {
                 </div>
               )}
               {mode !== 'later' && (
-                <Field
-                  label="Album title (shown to the client)"
-                  placeholder="Sara & Ahmed — Wedding"
-                  maxLength={200}
-                  value={albumTitle}
-                  onChange={(e) => {
-                    setTitleTouched(true)
-                    setAlbumTitle(e.target.value)
-                  }}
-                  hint="The album starts hidden from the client (draft). Publish it from the album page when the photos are ready."
-                />
+                <div className="adm-form__row">
+                  <Field
+                    label="Occasion"
+                    as="select"
+                    value={occasion}
+                    onChange={(e) => {
+                      setOccasion(e.target.value)
+                      if (!titleTouched) setAlbumTitle(suggestTitle(form.fullName, e.target.value))
+                    }}
+                  >
+                    {occasions.map((o) => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                    <option value="">Other (just the name)</option>
+                  </Field>
+                  <Field
+                    label="Album title (shown to the client)"
+                    placeholder="Sara & Ahmed — Wedding"
+                    maxLength={200}
+                    value={albumTitle}
+                    onChange={(e) => {
+                      setTitleTouched(true)
+                      setAlbumTitle(e.target.value)
+                    }}
+                  />
+                </div>
+              )}
+              {mode !== 'later' && (
+                <p className="adm-muted adm-small">
+                  The album starts hidden from the client (draft). Publish it from the album page when the photos are ready.
+                </p>
               )}
             </>
           )}
@@ -182,6 +210,11 @@ export default function ClientNewPage() {
             {busy ? 'Creating…' : mode === 'later' ? 'Create client' : 'Create client and album'}
           </button>
         </div>
+        {busy && mode === 'create' && (
+          <p className="adm-muted adm-small" role="status">
+            Creating the album’s folder in Google Drive (with Photos and Videos inside). This takes a few seconds.
+          </p>
+        )}
       </form>
 
       <DriveFolderPicker

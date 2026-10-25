@@ -4,15 +4,16 @@ import { useApi } from '../../hooks/useApi.js'
 import { Dialog } from '../../components/ui/Dialog.jsx'
 import { Checkbox, Field } from '../../components/ui/Field.jsx'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { ErrorBanner, PageHeader, StatusBadge } from '../../components/admin/AdminUi.jsx'
+import { ErrorBanner, Notice, PageHeader, StatusBadge } from '../../components/admin/AdminUi.jsx'
 import { formatBytes } from '../../utils/format.js'
 
-function FilmEditor({ film, isNew, onChanged }) {
+function FilmEditor({ film, isNew, onChanged, onDeleted }) {
   const [form, setForm] = useState({ title: film.title, description: film.description ?? '', isPublished: film.isPublished, sortOrder: film.sortOrder })
   const [error, setError] = useState(null)
   const [notice, setNotice] = useState(null)
   const [progress, setProgress] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const card = useRef(null)
 
   // A film that was just created is added at the end of the list: bring it into view.
@@ -49,6 +50,20 @@ function FilmEditor({ film, isNew, onChanged }) {
     }
   }
 
+  async function remove() {
+    if (!window.confirm(`Delete “${film.title}” from the website?`)) return
+    setError(null)
+    setNotice(null)
+    setDeleting(true)
+    try {
+      await api(`/api/admin/films/${film.id}`, { method: 'DELETE' })
+      onDeleted(film.title)
+    } catch (err) {
+      setError(err)
+      setDeleting(false)
+    }
+  }
+
   async function send(kind, file) {
     if (!file) return
     setError(null)
@@ -73,7 +88,7 @@ function FilmEditor({ film, isNew, onChanged }) {
         {film.isPublished ? <StatusBadge tone="ok">Published</StatusBadge> : <StatusBadge>Hidden</StatusBadge>}
       </header>
       <ErrorBanner error={error} />
-      {notice && <p className="form-success">{notice}</p>}
+      <Notice>{notice}</Notice>
       <div className="adm-film">
         <div className="adm-film__media">
           {film.videoUrl ? (
@@ -109,12 +124,8 @@ function FilmEditor({ film, isNew, onChanged }) {
         <button type="submit" className="adm-btn adm-btn--primary" disabled={!changed || saving}>
           {saving ? 'Saving…' : 'Save'}
         </button>
-        <button
-          type="button"
-          className="adm-btn adm-btn--danger-quiet"
-          onClick={() => window.confirm(`Delete “${film.title}” from the website?`) && api(`/api/admin/films/${film.id}`, { method: 'DELETE' }).then(onChanged)}
-        >
-          Delete
+        <button type="button" className="adm-btn adm-btn--danger-quiet" onClick={remove} disabled={deleting || saving}>
+          {deleting ? 'Deleting…' : 'Delete'}
         </button>
       </div>
     </form>
@@ -127,10 +138,14 @@ export default function FilmsAdminPage() {
   const [title, setTitle] = useState('')
   const [saveError, setSaveError] = useState(null)
   const [createdId, setCreatedId] = useState(null)
+  const [creatingBusy, setCreatingBusy] = useState(false)
+  const [notice, setNotice] = useState(null)
 
   async function create(e) {
     e.preventDefault()
     setSaveError(null)
+    setNotice(null)
+    setCreatingBusy(true)
     try {
       const film = await api('/api/admin/films', {
         method: 'POST',
@@ -142,6 +157,8 @@ export default function FilmsAdminPage() {
       reload()
     } catch (err) {
       setSaveError(err)
+    } finally {
+      setCreatingBusy(false)
     }
   }
 
@@ -156,12 +173,22 @@ export default function FilmsAdminPage() {
           </button>
         }
       />
+      <Notice>{notice}</Notice>
       {loading && <Spinner />}
       {error && <ErrorState error={error} onRetry={reload} />}
       {data?.length === 0 && <p className="adm-muted">No films yet.</p>}
       <div className="adm-stack">
         {data?.map((f) => (
-          <FilmEditor key={f.id} film={f} isNew={f.id === createdId} onChanged={reload} />
+          <FilmEditor
+            key={f.id}
+            film={f}
+            isNew={f.id === createdId}
+            onChanged={reload}
+            onDeleted={(title) => {
+              setNotice(`Deleted “${title}”.`)
+              reload()
+            }}
+          />
         ))}
       </div>
 
@@ -170,8 +197,8 @@ export default function FilmsAdminPage() {
         onClose={() => setCreating(false)}
         title="New film"
         footer={
-          <button type="submit" form="new-film" className="adm-btn adm-btn--primary">
-            Create &amp; add the video
+          <button type="submit" form="new-film" className="adm-btn adm-btn--primary" disabled={creatingBusy}>
+            {creatingBusy ? 'Creating…' : <>Create &amp; add the video</>}
           </button>
         }
       >

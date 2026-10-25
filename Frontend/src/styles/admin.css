@@ -44,6 +44,12 @@
   color: var(--adm-accent);
 }
 
+/* Messages brought into view after Save (Notice / ErrorBanner) stop below the sticky top bar, not under it. */
+.adm .form-success,
+.adm .form-error {
+  scroll-margin-top: 80px;
+}
+
 .adm-top {
   grid-area: top;
   position: sticky;

@@ -25,6 +25,7 @@ export const slugify = (s) =>
 function WallPhotos({ wall, reload, fileInput }) {
   const [progress, setProgress] = useState(null)
   const [error, setError] = useState(null)
+  const [deleting, setDeleting] = useState(null)
 
   async function uploadFiles(files) {
     if (!files.length) return
@@ -49,8 +50,16 @@ function WallPhotos({ wall, reload, fileInput }) {
 
   async function remove(image) {
     if (!window.confirm('Delete this photo from the website?')) return
-    await api(`/api/admin/galleries/${wall.id}/images/${image.id}`, { method: 'DELETE' })
-    reload()
+    setError(null)
+    setDeleting(image.id)
+    try {
+      await api(`/api/admin/galleries/${wall.id}/images/${image.id}`, { method: 'DELETE' })
+      reload()
+    } catch (err) {
+      setError(err)
+    } finally {
+      setDeleting(null)
+    }
   }
 
   return (
@@ -74,8 +83,8 @@ function WallPhotos({ wall, reload, fileInput }) {
                 <img src={`${img.image.src}/${img.image.widths[0]}.webp`} alt="" loading="lazy" />
               </div>
               <div className="adm-thumb__actions">
-                <button type="button" className="adm-link-btn adm-small adm-text-danger" onClick={() => remove(img)}>
-                  Delete
+                <button type="button" className="adm-link-btn adm-small adm-text-danger" disabled={deleting === img.id} onClick={() => remove(img)}>
+                  {deleting === img.id ? 'Deleting…' : 'Delete'}
                 </button>
               </div>
             </li>
@@ -96,10 +105,12 @@ export default function GalleriesPage() {
   const [creating, setCreating] = useState(false)
   const [form, setForm] = useState({ title: '', slug: '' })
   const [saveError, setSaveError] = useState(null)
+  const [creatingBusy, setCreatingBusy] = useState(false)
 
   async function create(e) {
     e.preventDefault()
     setSaveError(null)
+    setCreatingBusy(true)
     try {
       const g = await api('/api/admin/galleries', {
         method: 'POST',
@@ -108,6 +119,7 @@ export default function GalleriesPage() {
       navigate(`/admin/portfolio/${g.id}`)
     } catch (err) {
       setSaveError(err)
+      setCreatingBusy(false)
     }
   }
 
@@ -161,8 +173,8 @@ export default function GalleriesPage() {
         onClose={() => setCreating(false)}
         title="New portfolio story"
         footer={
-          <button type="submit" form="new-gallery" className="adm-btn adm-btn--primary">
-            Create &amp; add photos
+          <button type="submit" form="new-gallery" className="adm-btn adm-btn--primary" disabled={creatingBusy}>
+            {creatingBusy ? 'Creating…' : <>Create &amp; add photos</>}
           </button>
         }
       >

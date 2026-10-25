@@ -5,7 +5,7 @@ import { useApi } from '../../hooks/useApi.js'
 import { Field } from '../../components/ui/Field.jsx'
 import { ConfirmDialog } from '../../components/ui/Dialog.jsx'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { AlbumStatusBadge, CredentialsDialog, ErrorBanner, PageHeader, StatusBadge } from '../../components/admin/AdminUi.jsx'
+import { AlbumStatusBadge, CredentialsDialog, ErrorBanner, Notice, PageHeader, StatusBadge } from '../../components/admin/AdminUi.jsx'
 import { formatBytes, formatDate, formatDateTime } from '../../utils/format.js'
 
 export default function ClientDetailPage() {
@@ -104,7 +104,7 @@ export default function ClientDetailPage() {
         <form className="adm-card adm-form" onSubmit={save}>
           <h2>Details</h2>
           <ErrorBanner error={saveError} />
-          {saved && <p className="form-success">Saved.</p>}
+          <Notice>{saved && 'Saved.'}</Notice>
           <Field label="Full name" required value={form.fullName} onChange={set('fullName')} error={fe('fullName')} />
           <Field label="Username" required autoCapitalize="none" value={form.username} onChange={set('username')} error={fe('username')} />
           <div className="adm-form__row">

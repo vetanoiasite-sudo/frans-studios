@@ -17,9 +17,11 @@ export default function ClientLoginPage() {
   const [form, setForm] = useState({ username: '', password: '' })
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
+  // The gallery page that sent here (see RequireRole). Once signed in, this render sends them back to it.
+  const target = location.state?.from?.startsWith('/client') ? location.state.from : '/client'
 
   if (status === 'loading') return <Spinner fullScreen />
-  if (user?.role === 'client') return <Navigate to="/client" replace />
+  if (user?.role === 'client') return <Navigate to={target} replace />
 
   async function submit(e) {
     e.preventDefault()
@@ -27,7 +29,6 @@ export default function ClientLoginPage() {
     setError(null)
     try {
       const me = await login(form.username, form.password)
-      const target = location.state?.from?.startsWith('/client') ? location.state.from : '/client'
       navigate(me.role === 'admin' ? '/admin' : target, { replace: true })
     } catch (err) {
       setError(err.problem?.detail ?? err.message)

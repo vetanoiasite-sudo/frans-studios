@@ -4,7 +4,7 @@ import { api } from '../../services/api.js'
 import { useApi } from '../../hooks/useApi.js'
 import { ConfirmDialog } from '../../components/ui/Dialog.jsx'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { PageHeader, StatusBadge } from '../../components/admin/AdminUi.jsx'
+import { Notice, PageHeader, StatusBadge } from '../../components/admin/AdminUi.jsx'
 import { formatDateTime } from '../../utils/format.js'
 import { OtherDrivesBanner } from '../../components/admin/DriveMove.jsx'
 
@@ -49,7 +49,7 @@ export default function GoogleDrivePage() {
         }
       />
 
-      {params.get('connected') && <p className="form-success">Google Drive connected.</p>}
+      <Notice>{params.get('connected') && 'Google Drive connected.'}</Notice>
       {errorCode && <p className="form-error">{errors[errorCode] ?? 'The connection failed. Please try again.'}</p>}
 
       <section className="adm-card">

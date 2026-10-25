@@ -1887,16 +1887,20 @@ picture.about-hero__img img {
   display: grid;
   grid-template-areas:
     'card'
-    'info';
+    'info'
+    'tiers';
   padding-bottom: clamp(48px, 6vw, 88px);
 }
 
 /* Live layout: both columns sit in a centred ~1290px content area — text on the left, the
-   659px card on the right — leaving matching margins on both sides of the page. */
+   659px card on the right — leaving matching margins on both sides of the page. Published
+   package tiers get their own full-width row underneath. */
 @media (min-width: 960px) {
   .packages-band__inner {
     grid-template-columns: minmax(0, 1fr) minmax(0, 659px);
-    grid-template-areas: 'info card';
+    grid-template-areas:
+      'info card'
+      'tiers tiers';
     align-items: start;
     max-width: calc(1290px + 2 * var(--gutter));
     margin-inline: auto;
@@ -2009,17 +2013,25 @@ picture.about-hero__img img {
   color: #575757;
 }
 
-/* Package tiers (only when published in Admin → Packages). */
+/* Package tiers (only when published in Admin → Packages): side by side under the form, one per row on phones. */
 .packages-tiers {
+  grid-area: tiers;
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
-  width: 100%;
-  max-width: 540px;
-  margin-top: 40px;
+  margin-top: clamp(40px, 5vw, 64px);
+  padding-inline: var(--gutter);
+}
+
+@media (min-width: 960px) {
+  .packages-tiers {
+    padding-inline: 0; /* the band's inner already has the gutter */
+  }
 }
 
 .packages-tier {
   display: grid;
+  align-content: start; /* cards in a row share a height; keep the text at the top */
   gap: 8px;
   padding: 24px;
   background: #fff;

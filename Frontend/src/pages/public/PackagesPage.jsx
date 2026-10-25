@@ -74,26 +74,26 @@ export default function PackagesPage() {
                 Instagram
               </a>
             </div>
-
-            {packages?.length > 0 && (
-              <div className="packages-tiers">
-                {packages.map((p) => (
-                  <article key={p.id} className="packages-tier">
-                    <h3 className="packages-tier__name">{p.name}</h3>
-                    {formatPrice(p) && <p className="packages-tier__price">{formatPrice(p)}</p>}
-                    {p.summary && <p className="packages-tier__summary">{p.summary}</p>}
-                    {p.features.length > 0 && (
-                      <ul className="packages-tier__features">
-                        {p.features.map((f) => (
-                          <li key={f}>{f}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </article>
-                ))}
-              </div>
-            )}
           </section>
+
+          {packages?.length > 0 && (
+            <div className="packages-tiers">
+              {packages.map((p) => (
+                <article key={p.id} className="packages-tier">
+                  <h3 className="packages-tier__name">{p.name}</h3>
+                  {formatPrice(p) && <p className="packages-tier__price">{formatPrice(p)}</p>}
+                  {p.summary && <p className="packages-tier__summary">{p.summary}</p>}
+                  {p.features.length > 0 && (
+                    <ul className="packages-tier__features">
+                      {p.features.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

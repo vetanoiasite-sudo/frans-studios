@@ -5,7 +5,7 @@ import { useApi } from '../../hooks/useApi.js'
 import { Checkbox, Field } from '../../components/ui/Field.jsx'
 import { ConfirmDialog } from '../../components/ui/Dialog.jsx'
 import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { AlbumStatusBadge, ErrorBanner, PageHeader, Pagination } from '../../components/admin/AdminUi.jsx'
+import { AlbumStatusBadge, ErrorBanner, Notice, PageHeader, Pagination } from '../../components/admin/AdminUi.jsx'
 import { DriveFolderPicker, driveFolderUrl } from '../../components/admin/DriveFolderPicker.jsx'
 import { DriveUploader } from '../../components/admin/DriveUploader.jsx'
 import { ClientSelect } from '../../components/admin/ClientSelect.jsx'
@@ -16,12 +16,16 @@ function AlbumFiles({ album, onCoverChanged }) {
   const [page, setPage] = useState(1)
   const { data, loading, error } = useApi(`/api/admin/albums/${album.id}/files`, { page, pageSize: 60, v: album.lastSyncedAt })
   const [busy, setBusy] = useState(null)
+  const [coverError, setCoverError] = useState(null)
 
   async function setCover(fileId) {
     setBusy(fileId)
+    setCoverError(null)
     try {
       await api(`/api/admin/albums/${album.id}/cover`, { method: 'PUT', body: { fileId } })
       onCoverChanged()
+    } catch (err) {
+      setCoverError(err)
     } finally {
       setBusy(null)
     }
@@ -33,6 +37,7 @@ function AlbumFiles({ album, onCoverChanged }) {
 
   return (
     <>
+      <ErrorBanner error={coverError} />
       <ul className="adm-thumbs" role="list">
         {data.items.map((f) => (
           <li key={f.id} className={f.id === album.coverFileId ? 'adm-thumb adm-thumb--cover' : 'adm-thumb'}>
@@ -245,7 +250,7 @@ function AlbumEditPage() {
         <form className="adm-card adm-form" onSubmit={save}>
           <h2>Album details</h2>
           <ErrorBanner error={error} />
-          {notice && <p className="form-success">{notice}</p>}
+          <Notice>{notice}</Notice>
           <ClientSelect value={form.clientId} onChange={(v) => setForm((f) => ({ ...f, clientId: v }))} error={fe('clientId')} />
           <Field label="Title" placeholder="Sara & Ahmed — Wedding" required value={form.title} onChange={set('title')} error={fe('title')} />
           <Field label="Description (shown to the client)" as="textarea" rows={3} value={form.description} onChange={set('description')} />
@@ -316,6 +321,11 @@ function AlbumEditPage() {
               </button>
             )}
           </div>
+          {busy && creatingFolder && (
+            <p className="adm-muted adm-small" role="status">
+              Creating the album’s folder in Google Drive (with Photos and Videos inside). This takes a few seconds.
+            </p>
+          )}
         </form>
 
         {!isNew && (
