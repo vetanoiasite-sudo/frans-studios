@@ -119,7 +119,7 @@ public sealed class PublicController(
             .Skip((page - 1) * pageSize).Take(pageSize)
             .Select(i => new { i.Id, i.Image, i.AltText, i.Gallery.Slug, i.Gallery.Title })
             .ToListAsync(ct);
-        var items = rows.Select(r => new PortfolioImageDto(ImageDto.From(r.Image, AltOr(r.AltText, $"{r.Title} — wedding photography by Frans Studios"), r.Id), r.Slug, r.Title)).ToList();
+        var items = rows.Select(r => new PortfolioImageDto(ImageDto.From(r.Image, AltOr(r.AltText, $"{r.Title} — wedding photography by Vetanoia"), r.Id), r.Slug, r.Title)).ToList();
         return new Paged<PortfolioImageDto>(items, total, page, pageSize);
     }
 

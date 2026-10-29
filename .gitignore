@@ -13,6 +13,7 @@ Backend/FransStudios.Api/wwwroot/
 *.pfx
 appsettings.*.local.json
 appsettings.Production.json
+*.local.txt
 
 # Local runtime data (media, caches, data-protection keys)
 App_Data/

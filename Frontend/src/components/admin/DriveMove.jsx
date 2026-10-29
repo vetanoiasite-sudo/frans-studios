@@ -98,7 +98,7 @@ export function DriveMoveNotice({ album, connectedEmail, onChanged }) {
         </button>
       </div>
       <p className="adm-muted adm-small">
-        Google copies the files into <em>My Drive / Frans Studios Albums</em> (big albums take a while). The originals stay in the old Drive until you
+        Google copies the files into <em>My Drive / Vetanoia Albums</em> (big albums take a while). The originals stay in the old Drive until you
         delete them there.
       </p>
     </section>

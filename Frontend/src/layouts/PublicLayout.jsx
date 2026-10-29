@@ -53,8 +53,8 @@ export default function PublicLayout() {
       {/* Same translucent dark bar on every page, as on the live site. */}
       <header className="pub-header">
         <div className="pub-header__inner">
-          <Link to="/" className="pub-logo" aria-label="Frans Studios — home">
-            <img className="pub-logo__img" src={logoWhite} width={1402} height={368} alt="" />
+          <Link to="/" className="pub-logo" aria-label="Vetanoia — home">
+            <img className="pub-logo__img" src={logoWhite} width={1974} height={300} alt="" />
           </Link>
 
           <nav className="pub-nav" aria-label="Main">
@@ -106,8 +106,8 @@ export default function PublicLayout() {
       {/* Footer (latest design): #F5F5F5 — logo, then about text | contacts | social icons; black credit bar. */}
       <footer className="pub-footer">
         <div className="pub-footer__inner">
-          <Link to="/" className="pub-footer__logo" aria-label="Frans Studios — home">
-            <img src={logoBlack} width={1402} height={368} alt="" />
+          <Link to="/" className="pub-footer__logo" aria-label="Vetanoia — home">
+            <img src={logoBlack} width={1974} height={300} alt="" />
           </Link>
           <p className="pub-footer__about">{studio.footerAbout}</p>
           <address className="pub-footer__contact">
@@ -118,7 +118,7 @@ export default function PublicLayout() {
               </a>
             ))}
           </address>
-          <ul className="pub-footer__social" role="list" aria-label="Frans Studios on social media">
+          <ul className="pub-footer__social" role="list" aria-label="Vetanoia on social media">
             {socials
               .filter((s) => s.href)
               .map((s) => (

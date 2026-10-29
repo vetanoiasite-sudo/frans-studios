@@ -18,8 +18,8 @@ function ClientShell() {
   return (
     <div className="cl-shell">
       <header className="cl-bar">
-        <Link to="/client" className="cl-brand" aria-label="Frans Studios — your galleries">
-          <img className="cl-brand__logo" src={logoBlack} width={1402} height={368} alt="" />
+        <Link to="/client" className="cl-brand" aria-label="Vetanoia — your galleries">
+          <img className="cl-brand__logo" src={logoBlack} width={1974} height={300} alt="" />
         </Link>
         <div className="cl-bar__user">
           {me?.albumCount > 1 && (
@@ -34,7 +34,8 @@ function ClientShell() {
         </div>
       </header>
       <main className="cl-main">
-        <Outlet />
+        {/* Pages read `me` (name, album count) from here instead of fetching it again. */}
+        <Outlet context={me} />
       </main>
       <ScrollRestoration />
     </div>

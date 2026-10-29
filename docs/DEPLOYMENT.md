@@ -223,7 +223,7 @@ build machine: `dotnet ef migrations script --idempotent -p Backend/FransStudios
 6. Copy the **Client ID** and **Client secret** into the app-pool environment variables
    `GoogleDrive__ClientId` / `GoogleDrive__ClientSecret` (§4), then recycle the pool.
 7. In the admin: *Google Drive → Connect Google Drive* → sign in with the studio account → allow.
-8. Nothing else to set up: new album folders go in `My Drive / Frans Studios Albums`, which the website creates the first time an album needs a folder.
+8. Nothing else to set up: new album folders go in `My Drive / Vetanoia Albums`, which the website creates the first time an album needs a folder.
 
 **Switching to another Google account** (for example from a developer's test account to the studio's): press
 *Reconnect / switch account* and sign in with the new account. Albums already in the previous account's Drive keep

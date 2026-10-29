@@ -10,7 +10,7 @@ public sealed class SiteOptions
     public const string Section = "Site";
     /// <summary>Canonical public origin, e.g. https://fransstudios.com (no trailing slash).</summary>
     [Required, Url] public string PublicBaseUrl { get; set; } = "";
-    public string SiteName { get; set; } = "Frans Studios";
+    public string SiteName { get; set; } = "Vetanoia";
     /// <summary>Only needed if the SPA is ever served from a different origin than the API.</summary>
     public string[] AllowedCorsOrigins { get; set; } = [];
     /// <summary>Old WordPress paths → new paths (301).</summary>
@@ -97,7 +97,7 @@ public sealed class EmailOptions
     /// <summary>"None" (log only) or "Smtp". Other providers can be added behind IEmailSender.</summary>
     public string Provider { get; set; } = "None";
     public string? FromAddress { get; set; }
-    public string? FromName { get; set; } = "Frans Studios";
+    public string? FromName { get; set; } = "Vetanoia";
     /// <summary>Where new-inquiry notifications go.</summary>
     public string? NotifyAddress { get; set; }
     public SmtpSettings Smtp { get; set; } = new();

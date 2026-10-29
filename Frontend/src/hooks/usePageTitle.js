@@ -6,6 +6,6 @@ import { useEffect } from 'react'
  */
 export function usePageTitle(title) {
   useEffect(() => {
-    if (title) document.title = title.includes('Frans Studios') ? title : `${title} — Frans Studios`
+    if (title) document.title = title.includes('Vetanoia') ? title : `${title} — Vetanoia`
   }, [title])
 }

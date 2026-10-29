@@ -304,20 +304,5 @@ public sealed class AdminDriveFilesController(
         return new BulkResult(done, failed);
     }
 
-    private async Task<IActionResult> RunAsync(Func<Task<IActionResult>> action)
-    {
-        try { return await action(); }
-        catch (DriveUploadException ex) { return Problem(statusCode: ex.StatusCode, title: ex.Message); }
-        catch (DriveNotConnectedException ex) { return Problem(statusCode: 503, title: ex.Message); }
-        catch (DriveApiException ex) when (ex.Reason is "storageQuotaExceeded" or "quotaExceeded")
-        {
-            return Problem(statusCode: 507, title: "The studio's Google Drive is full. Free up space or upgrade the Google storage plan.");
-        }
-        catch (DriveApiException ex) when (ex.StatusCode == 404) { return this.NotFoundProblem("That file or folder was not found in Drive."); }
-        catch (DriveApiException ex) when (ex.StatusCode == 403)
-        {
-            return Problem(statusCode: 403, title: $"Google Drive doesn't allow that: {ex.Message}");
-        }
-        catch (DriveApiException ex) { return Problem(statusCode: 502, title: $"Google Drive refused the request: {ex.Message}"); }
-    }
+    private Task<IActionResult> RunAsync(Func<Task<IActionResult>> action) => this.RunDriveAsync(action);
 }

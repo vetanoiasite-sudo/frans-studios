@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
     <div className="adm-login">
       <form className="adm-login__card" onSubmit={submit}>
         <h1>Studio admin</h1>
-        <p className="adm-muted">Frans Studios</p>
+        <p className="adm-muted">Vetanoia</p>
         {error && (
           <p className="form-error" role="alert">
             {error}

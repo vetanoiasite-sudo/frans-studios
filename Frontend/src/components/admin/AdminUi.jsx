@@ -55,7 +55,7 @@ export function CredentialsDialog({ credentials, onClose, title = 'Client login 
   const [copied, setCopied] = useState(false)
   if (!credentials) return null
   const loginUrl = `${window.location.origin}/client/login`
-  const text = `Your Frans Studios gallery\n${loginUrl}\nUsername: ${credentials.username}\nPassword: ${credentials.password}`
+  const text = `Your Vetanoia gallery\n${loginUrl}\nUsername: ${credentials.username}\nPassword: ${credentials.password}`
 
   async function copy() {
     try {

@@ -89,22 +89,6 @@ public sealed class AdminUploadsController(AppDbContext db, DriveUploadService u
         });
     }
 
-    /// <summary>Turns upload / Drive errors into ProblemDetails the admin can read.</summary>
-    private async Task<IActionResult> RunAsync(Func<Task<IActionResult>> action)
-    {
-        try { return await action(); }
-        catch (DriveUploadException ex) { return Problem(statusCode: ex.StatusCode, title: ex.Message); }
-        catch (DriveApiException ex) when (ex.Reason is "storageQuotaExceeded" or "quotaExceeded")
-        {
-            return Problem(statusCode: 507, title: "The studio's Google Drive is full. Free up space or upgrade the Google storage plan.");
-        }
-        catch (DriveApiException ex) when (ex.StatusCode == 404)
-        {
-            return Problem(statusCode: 409, title: "The album's Google Drive folder was not found. It may have been deleted or moved.");
-        }
-        catch (DriveApiException ex)
-        {
-            return Problem(statusCode: 502, title: $"Google Drive refused the request: {ex.Message}");
-        }
-    }
+    private Task<IActionResult> RunAsync(Func<Task<IActionResult>> action) =>
+        this.RunDriveAsync(action, StatusCodes.Status409Conflict, "The album's Google Drive folder was not found. It may have been deleted or moved.");
 }

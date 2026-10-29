@@ -157,14 +157,4 @@ public sealed class AdminDriveController(
         catch (DriveNotConnectedException ex) { return Problem(statusCode: 503, title: ex.Message); }
         catch (DriveApiException ex) when (ex.StatusCode == 404) { return this.NotFoundProblem("Folder not found."); }
     }
-
-    /// <summary>Breadcrumb path for a folder in the picker.</summary>
-    [HttpGet("folders/{id}/path")]
-    public async Task<ActionResult<object>> FolderPath(string id, CancellationToken ct)
-    {
-        if (!DriveClient.IsValidId(id)) return this.FieldError("id", "Invalid folder id.");
-        try { return new { path = await drive.GetFolderPathAsync(id, ct) }; }
-        catch (DriveNotConnectedException ex) { return Problem(statusCode: 503, title: ex.Message); }
-        catch (DriveApiException ex) when (ex.StatusCode == 404) { return this.NotFoundProblem("Folder not found."); }
-    }
 }

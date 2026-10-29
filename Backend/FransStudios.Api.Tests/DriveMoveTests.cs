@@ -44,15 +44,15 @@ public sealed class DriveMoveTests(TestApp app) : IClassFixture<TestApp>
         Assert.Equal(HttpStatusCode.OK, started.StatusCode);
         var after = await WaitForMoveAsync(admin, albumId);
 
-        // The album now lives in the connected Drive, in "Frans Studios Albums", with its sub-folders.
+        // The album now lives in the connected Drive, in "Vetanoia Albums", with its sub-folders.
         Assert.Equal(JsonValueKind.Null, after.GetProperty("driveMove").ValueKind);
         await using (var scope = app.Services.CreateAsyncScope())
             Assert.False(await scope.ServiceProvider.GetRequiredService<AppDbContext>().AlbumMoves.AnyAsync(m => m.AlbumId == albumId));
         var folder = app.Drive.Items[after.GetProperty("driveFolderId").GetString()!];
         Assert.Equal("Old Wedding", folder.Name);
-        Assert.Equal("Frans Studios Albums", app.Drive.Items[folder.ParentId!].Name);
+        Assert.Equal("Vetanoia Albums", app.Drive.Items[folder.ParentId!].Name);
         Assert.Equal(FakeDrive.AccessToken, app.Drive.OwnerOf(folder.Id));
-        Assert.Equal("My Drive / Frans Studios Albums / Old Wedding", after.GetProperty("driveFolderName").GetString());
+        Assert.Equal("My Drive / Vetanoia Albums / Old Wedding", after.GetProperty("driveFolderName").GetString());
 
         // Same files (same ids, so links and the cover still work), now copies in the new Drive.
         var files = await FilesAsync(albumId);
@@ -131,7 +131,7 @@ public sealed class DriveMoveTests(TestApp app) : IClassFixture<TestApp>
 
         var folderId = after.GetProperty("driveFolderId").GetString()!;
         Assert.NotEqual(abandoned.Id, folderId);
-        Assert.Equal("Frans Studios Albums", app.Drive.Items[app.Drive.Items[folderId].ParentId!].Name);
+        Assert.Equal("Vetanoia Albums", app.Drive.Items[app.Drive.Items[folderId].ParentId!].Name);
         var files = await FilesAsync(albumId);
         Assert.Equal(3, files.Count);
         Assert.All(files, f => Assert.Equal(folderId, AlbumFolderOf(f.DriveFileId)));

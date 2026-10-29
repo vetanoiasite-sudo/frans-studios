@@ -30,13 +30,13 @@ public sealed class DriveUploadTests(TestApp app) : IClassFixture<TestApp>
         var folder1 = app.Drive.Items[first.GetProperty("driveFolderId").GetString()!];
         var folder2 = app.Drive.Items[second.GetProperty("driveFolderId").GetString()!];
         var root = app.Drive.Items[folder1.ParentId!];
-        Assert.Equal(("Frans Studios Albums", "root"), (root.Name, root.ParentId)); // created by the website, in My Drive
+        Assert.Equal(("Vetanoia Albums", "root"), (root.Name, root.ParentId)); // created by the website, in My Drive
         Assert.Equal(root.Id, folder2.ParentId);
-        Assert.Single(app.Drive.Items.Values, i => i.Name == "Frans Studios Albums"); // created once, then reused
+        Assert.Single(app.Drive.Items.Values, i => i.Name == "Vetanoia Albums"); // created once, then reused
         Assert.Equal("Sara & Ahmed — Wedding", folder1.Name);
         Assert.Equal("Sara & Ahmed — Wedding (2)", folder2.Name); // never merges two albums into one folder
         Assert.Equal(["Photos", "Videos"], app.Drive.Items.Values.Where(i => i.ParentId == folder1.Id).Select(i => i.Name).Order());
-        Assert.Equal("My Drive / Frans Studios Albums / Sara & Ahmed — Wedding", first.GetProperty("driveFolderName").GetString());
+        Assert.Equal("My Drive / Vetanoia Albums / Sara & Ahmed — Wedding", first.GetProperty("driveFolderName").GetString());
     }
 
     [Fact]

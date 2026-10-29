@@ -133,7 +133,7 @@ export default function ClientNewPage() {
                   <span>
                     <strong>Create a new album folder in Drive</strong>
                     <span className="adm-muted adm-small">
-                      In <em>My Drive / Frans Studios Albums</em>, with Photos and Videos inside. Upload the photos to it afterwards.
+                      In <em>My Drive / Vetanoia Albums</em>, with Photos and Videos inside. Upload the photos to it afterwards.
                     </span>
                   </span>
                 </label>

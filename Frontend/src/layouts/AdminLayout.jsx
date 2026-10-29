@@ -32,7 +32,7 @@ function AdminShell() {
 
   useEffect(() => setOpen(false), [location.pathname])
   useEffect(() => {
-    document.title = 'Admin — Frans Studios'
+    document.title = 'Admin — Vetanoia'
   }, [location.pathname])
 
   async function signOut() {
@@ -46,7 +46,7 @@ function AdminShell() {
         <button type="button" className="adm-top__menu" aria-expanded={open} aria-controls="adm-nav" onClick={() => setOpen((o) => !o)}>
           <span className="visually-hidden">Menu</span>☰
         </button>
-        <span className="adm-top__brand">Frans Studios · Admin</span>
+        <span className="adm-top__brand">Vetanoia · Admin</span>
         <div className="adm-top__user">
           <a href="/" target="_blank" rel="noopener noreferrer" className="adm-top__link">
             View site ↗

@@ -31,7 +31,7 @@ export default function ContactPage() {
 
   return (
     <div className="packages-page contact-page">
-      <h1 className="visually-hidden">Contact Frans Studios</h1>
+      <h1 className="visually-hidden">Contact Vetanoia</h1>
 
       <div className="packages-hero contact-hero" aria-hidden={cover || heroPhoto ? undefined : true}>
         {cover ? (

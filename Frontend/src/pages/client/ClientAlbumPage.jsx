@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useOutletContext, useParams } from 'react-router'
 import { api } from '../../services/api.js'
 import { useApi } from '../../hooks/useApi.js'
 import { usePageTitle } from '../../hooks/usePageTitle.js'
@@ -137,7 +137,7 @@ function MediaTile({ file, onOpen, downloads }) {
 export default function ClientAlbumPage() {
   const { id } = useParams()
   const { data: album, error, loading, reload } = useApi(`/api/client/albums/${id}`)
-  const { data: me } = useApi('/api/client/me')
+  const me = useOutletContext()
   const { data: allAlbums } = useApi(me?.albumCount > 1 ? '/api/client/albums' : null)
   const otherAlbums = allAlbums?.filter((a) => a.id !== id) ?? []
   const [section, setSection] = useState(null)

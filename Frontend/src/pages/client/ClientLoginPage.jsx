@@ -39,8 +39,8 @@ export default function ClientLoginPage() {
   return (
     <div className="cl-login">
       <div className="cl-login__panel">
-        <Link to="/" className="cl-brand cl-brand--large" aria-label="Frans Studios — home">
-          <img className="cl-brand__logo" src={logoBlack} width={1402} height={368} alt="" />
+        <Link to="/" className="cl-brand cl-brand--large" aria-label="Vetanoia — home">
+          <img className="cl-brand__logo" src={logoBlack} width={1974} height={300} alt="" />
         </Link>
         <h1 className="cl-login__title">{t('client.login.title')}</h1>
         <p className="cl-login__subtitle">{t('client.login.subtitle')}</p>

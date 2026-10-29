@@ -17,7 +17,7 @@ const links = [
  */
 export function ExploreLinks() {
   return (
-    <section className="explore-links" aria-label="Explore Frans Studios">
+    <section className="explore-links" aria-label="Explore Vetanoia">
       <ul className="explore-links__list" role="list">
         {links.map((l) => (
           <li key={l.to}>

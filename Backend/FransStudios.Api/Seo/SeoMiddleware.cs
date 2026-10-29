@@ -27,18 +27,18 @@ public sealed class SeoMiddleware(RequestDelegate next, IWebHostEnvironment env,
 
     private static readonly Dictionary<string, (string Title, string Description)> StaticPages = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["/"] = ("Frans Studios — Wedding Photography & Cinematography",
+        ["/"] = ("Vetanoia — Wedding Photography & Cinematography",
             "Documentary and artistic wedding photography and films by Joe Frans and team. Natural, honest, timeless — with a love for film tones and black & white."),
-        ["/about"] = ("About Us — Frans Studios",
-            "Meet Joe Frans and the Frans Studios team: wedding photographers and cinematographers who tell real stories with calm, unobtrusive presence."),
-        ["/portfolio"] = ("Portfolio — Frans Studios",
-            "Wedding stories photographed by Frans Studios: real moments, film tones and timeless black & white."),
-        ["/films"] = ("Wedding Films — Frans Studios",
-            "Cinematic wedding films by Frans Studios — every glance, laugh and embrace woven into a story."),
-        ["/packages"] = ("Packages — Frans Studios",
-            "Ask about Frans Studios wedding photography and film packages. Tell us about your day and we'll send our offers."),
-        ["/contact"] = ("Contact — Frans Studios",
-            "Get in touch with Frans Studios about your wedding date, venue and coverage. Email, WhatsApp or the inquiry form."),
+        ["/about"] = ("About Us — Vetanoia",
+            "Meet Joe Frans and the Vetanoia team: wedding photographers and cinematographers who tell real stories with calm, unobtrusive presence."),
+        ["/portfolio"] = ("Portfolio — Vetanoia",
+            "Wedding stories photographed by Vetanoia: real moments, film tones and timeless black & white."),
+        ["/films"] = ("Wedding Films — Vetanoia",
+            "Cinematic wedding films by Vetanoia — every glance, laugh and embrace woven into a story."),
+        ["/packages"] = ("Packages — Vetanoia",
+            "Ask about Vetanoia wedding photography and film packages. Tell us about your day and we'll send our offers."),
+        ["/contact"] = ("Contact — Vetanoia",
+            "Get in touch with Vetanoia about your wedding date, venue and coverage. Email, WhatsApp or the inquiry form."),
     };
 
     public async Task InvokeAsync(HttpContext ctx, AppDbContext db)
@@ -92,7 +92,7 @@ public sealed class SeoMiddleware(RequestDelegate next, IWebHostEnvironment env,
     private static async Task<PageMeta> ResolveAsync(string path, AppDbContext db, SiteOptions site, CancellationToken ct)
     {
         if (IsAppArea(path))
-            return new PageMeta(path.StartsWith("/admin", StringComparison.OrdinalIgnoreCase) ? "Admin — Frans Studios" : "Your Gallery — Frans Studios",
+            return new PageMeta(path.StartsWith("/admin", StringComparison.OrdinalIgnoreCase) ? "Admin — Vetanoia" : "Your Gallery — Vetanoia",
                 "Private area.", NoIndex: true);
 
         if (StaticPages.TryGetValue(path, out var page))
@@ -117,7 +117,7 @@ public sealed class SeoMiddleware(RequestDelegate next, IWebHostEnvironment env,
             if (g is not null)
             {
                 var description = g.SeoDescription ?? Shorten(g.Intro) ??
-                                  $"{g.Title}{(g.Location is null ? "" : " in " + g.Location)} — a wedding story by Frans Studios.";
+                                  $"{g.Title}{(g.Location is null ? "" : " in " + g.Location)} — a wedding story by Vetanoia.";
                 var coverImage = g.CoverImage ?? g.Images.FirstOrDefault();
                 var cover = coverImage is null ? null : ShareImage(coverImage.Image);
                 var jsonLd = JsonSerializer.Serialize(new Dictionary<string, object?>
@@ -130,11 +130,11 @@ public sealed class SeoMiddleware(RequestDelegate next, IWebHostEnvironment env,
                     ["image"] = g.Images.Select(i => Absolute(site, ShareImage(i.Image))).ToArray(),
                     ["author"] = new Dictionary<string, object?> { ["@type"] = "Organization", ["name"] = site.SiteName, ["url"] = site.PublicBaseUrl },
                 });
-                return new PageMeta($"{g.Title} — Frans Studios", description, cover, jsonLd);
+                return new PageMeta($"{g.Title} — Vetanoia", description, cover, jsonLd);
             }
         }
 
-        return new PageMeta("Page not found — Frans Studios", "This page doesn't exist.", NoIndex: true, Status: 404);
+        return new PageMeta("Page not found — Vetanoia", "This page doesn't exist.", NoIndex: true, Status: 404);
     }
 
     private static string RenderHead(PageMeta m, string path, SiteOptions site)

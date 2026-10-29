@@ -274,7 +274,7 @@ function AlbumEditPage() {
                     <span>
                       <strong>Create a new folder for this album</strong>
                       <span className="adm-muted adm-small">
-                        In <em>My Drive / Frans Studios Albums</em>, named after the album, with Photos and Videos inside. Upload the files here after creating
+                        In <em>My Drive / Vetanoia Albums</em>, named after the album, with Photos and Videos inside. Upload the files here after creating
                         the album, or straight into Drive.
                       </span>
                     </span>

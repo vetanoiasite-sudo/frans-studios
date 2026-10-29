@@ -17,7 +17,7 @@ export default function AboutPage() {
     <>
       {/* Hero — Figma: full-width 1440 × 1024 team photo; the header sits over it. */}
       <section className="about-hero">
-        <h1 className="visually-hidden">About Frans Studios</h1>
+        <h1 className="visually-hidden">About Vetanoia</h1>
         {cover && <ResponsiveImage image={cover} className="about-hero__img" sizes="100vw" priority alt="" />}
         {cover === null && (
           <img
@@ -25,7 +25,7 @@ export default function AboutPage() {
             src={heroPhoto}
             width={1440}
             height={1024}
-            alt="The Frans Studios team in the studio, some sitting, others walking past in motion blur"
+            alt="The Vetanoia team in the studio, some sitting, others walking past in motion blur"
             fetchPriority="high"
             decoding="async"
           />

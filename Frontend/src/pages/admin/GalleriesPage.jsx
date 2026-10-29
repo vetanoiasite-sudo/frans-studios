@@ -184,7 +184,7 @@ export default function GalleriesPage() {
           <Field label="Title" placeholder="Sara & Amr" required value={form.title} onChange={(e) => setForm({ title: e.target.value, slug: slugify(e.target.value) })} />
           <Field
             label="Page address (filled in from the title)"
-            hint={`fransstudios.com/portfolio/${form.slug || '…'}`}
+            hint={`vetanoia.com/portfolio/${form.slug || '…'}`}
             required
             value={form.slug}
             onChange={(e) => setForm({ ...form, slug: e.target.value })}

@@ -70,10 +70,10 @@ public sealed class DriveUploadService(
     // ── The folder album folders are created in ─────────────────────────────
 
     /// <summary>Album folders go in this folder in My Drive. The website creates it the first time it's needed.</summary>
-    public const string AlbumsRootName = "Frans Studios Albums";
+    public const string AlbumsRootName = "Vetanoia Albums";
 
     /// <summary>
-    /// The "Frans Studios Albums" folder in <paramref name="target"/>'s My Drive: the remembered one if it's still
+    /// The "Vetanoia Albums" folder in <paramref name="target"/>'s My Drive: the remembered one if it's still
     /// there, else an existing folder with that name, else a new one. Looking it up again covers switching Google
     /// accounts (the remembered folder is then in the other account's Drive) and the folder being deleted.
     /// </summary>
@@ -114,7 +114,7 @@ public sealed class DriveUploadService(
     // ── Album folders ───────────────────────────────────────────────────────
 
     /// <summary>
-    /// Creates the album's folder inside "Frans Studios Albums" (named after the album, made unique) with
+    /// Creates the album's folder inside "Vetanoia Albums" (named after the album, made unique) with
     /// Photos and Videos inside, and assigns it to the album. The caller saves the album.
     /// </summary>
     public async Task CreateAlbumFolderAsync(Album album, CancellationToken ct)
@@ -127,7 +127,7 @@ public sealed class DriveUploadService(
     }
 
     /// <summary>
-    /// A new folder for an album in <paramref name="target"/>'s Drive: in "Frans Studios Albums", named after the
+    /// A new folder for an album in <paramref name="target"/>'s Drive: in "Vetanoia Albums", named after the
     /// album (made unique), with Photos and Videos inside. Returns its id and display path.
     /// </summary>
     public async Task<(string Id, string Path)> CreateNewAlbumFolderAsync(DriveClient target, string title, CancellationToken ct)

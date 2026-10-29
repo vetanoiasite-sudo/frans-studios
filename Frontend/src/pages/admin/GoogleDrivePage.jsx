@@ -12,7 +12,7 @@ const errors = {
   consent_denied: 'Google access was not granted.',
   invalid_state: 'The connection attempt expired or was invalid. Please try again.',
   scope_missing: 'Drive access was not granted. On the Google screen, make sure the Google Drive permission is ticked.',
-  no_refresh_token: 'Google did not return long-term access. Remove “Frans Studios” at myaccount.google.com/permissions, then connect again.',
+  no_refresh_token: 'Google did not return long-term access. Remove “Vetanoia” at myaccount.google.com/permissions, then connect again.',
   token_exchange_failed: 'Google rejected the connection. Check the OAuth client settings on the server.',
 }
 
@@ -110,7 +110,7 @@ export default function GoogleDrivePage() {
           <li>Google credentials are stored encrypted on the server and are never sent to browsers.</li>
           <li>Clients never see Drive links. Files are streamed to them through the website only after their login is checked.</li>
           <li>
-            New albums get their own folder in <code>My Drive / Frans Studios Albums</code>, with Photos and Videos inside. The website creates
+            New albums get their own folder in <code>My Drive / Vetanoia Albums</code>, with Photos and Videos inside. The website creates
             that folder by itself the first time. Each sub-folder becomes a tab in the client’s gallery.
           </li>
         </ul>

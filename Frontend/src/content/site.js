@@ -2,20 +2,20 @@
 // Portfolio galleries, films and packages are managed in the admin dashboard instead.
 
 export const studio = {
-  name: 'Frans Studios',
+  name: 'Vetanoia',
   tagline: 'Love. Art. Captured.',
   intro:
     'Celebrate your unique love story by capturing every detail with a touch of sophistication and timeless beauty.',
   footerLine: 'Capturing moments that words can’t.',
   footerAbout:
     'We’re a team of professional wedding photographers and cinematographers driven by a love for storytelling and a passion for capturing emotions, ready to preserve your most cherished moments.',
-  email: 'Frans.Weddings@gmail.com',
-  phoneDisplay: '+20 128 666 0303',
-  phoneFooter: '+201286660303',
-  phoneHref: 'tel:+201286660303',
-  whatsappHref: 'https://wa.me/201286660303',
-  instagramHref: 'https://www.instagram.com/fransstudios',
-  instagramHandle: '@fransstudios',
+  email: 'info@vetanoia.com',
+  phoneDisplay: '+20 122 171 1458',
+  phoneFooter: '+201221711458',
+  phoneHref: 'tel:+201221711458',
+  whatsappHref: 'https://wa.me/201221711458',
+  instagramHref: 'https://www.instagram.com/vetanoia_solutions',
+  instagramHandle: '@vetanoia_solutions',
 }
 
 // Footer social icons (design order). An icon only appears once its link is filled in.
@@ -27,8 +27,8 @@ export const socials = [
 // Footer contact lines (latest design).
 export const footerContacts = [
   { icon: 'mail', label: studio.email, href: `mailto:${studio.email}` },
-  { icon: 'phone', label: 'Egypt +201286660303', href: studio.phoneHref },
-  { icon: 'whatsapp', label: 'Egypt +201286660303', href: studio.whatsappHref, external: true },
+  { icon: 'phone', label: `Egypt ${studio.phoneFooter}`, href: studio.phoneHref },
+  { icon: 'whatsapp', label: `Egypt ${studio.phoneFooter}`, href: studio.whatsappHref, external: true },
 ]
 
 // Bottom bar credit.
@@ -62,7 +62,7 @@ export const founder = {
 export const family = {
   title: 'Meet Our Family',
   intro:
-    'We’re a tight-knit group at Frans Studios, and we love bringing your ideas to life! With every project, we work together to create something special, all while having fun and making sure you feel right at home.',
+    'We’re a tight-knit group at Vetanoia, and we love bringing your ideas to life! With every project, we work together to create something special, all while having fun and making sure you feel right at home.',
   members: [
     { name: 'Mina Fathy', photo: 'mina-fathy' },
     { name: 'Fady Khela', photo: 'fady-khela' },

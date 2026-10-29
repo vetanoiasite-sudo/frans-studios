@@ -22,7 +22,7 @@ const heroPhotos = [
 ]
 
 export default function HomePage() {
-  usePageTitle('Frans Studios — Wedding Photography & Cinematography')
+  usePageTitle('Vetanoia — Wedding Photography & Cinematography')
   const { data: galleries } = useApi('/api/public/galleries')
   const { data: films } = useApi('/api/public/films')
 
@@ -48,7 +48,7 @@ export default function HomePage() {
         <HeroCarousel images={heroPhotos} />
       </section>
 
-      <section className="home-stats" aria-label="Frans Studios in numbers">
+      <section className="home-stats" aria-label="Vetanoia in numbers">
         <dl className="home-stats__list">
           {stats.map((s) => (
             <div key={s.label} className="home-stats__item">

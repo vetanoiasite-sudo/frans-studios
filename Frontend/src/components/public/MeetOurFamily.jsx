@@ -26,7 +26,7 @@ export function MeetOurFamily() {
         {family.members.map((m) => (
           <li key={m.name} className="family__member">
             {photoUrl(m.photo) ? (
-              <img src={photoUrl(m.photo)} width={384} height={600} alt={`${m.name}, Frans Studios team`} loading="lazy" decoding="async" />
+              <img src={photoUrl(m.photo)} width={384} height={600} alt={`${m.name}, Vetanoia team`} loading="lazy" decoding="async" />
             ) : (
               <div className="family__placeholder" aria-hidden="true" />
             )}

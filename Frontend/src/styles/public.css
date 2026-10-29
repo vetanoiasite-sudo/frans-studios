@@ -47,7 +47,7 @@
   line-height: 1;
 }
 
-/* FRANS logotype (1402 × 368 PNG): 68 × 20 phone, 102 × 27 tablet, 130 × 34 desktop. */
+/* Vetanoia logo (1974 × 300 PNG): 132 × 20 phone, 178 × 27 tablet, 224 × 34 desktop. */
 .pub-logo__img {
   width: auto;
   height: 20px;
@@ -2406,7 +2406,7 @@ picture.about-hero__img img {
 }
 
 /* ── Footer (latest design) ──
-   #F5F5F5 band: black FRANS logo; below it the about text (left), contact lines (middle),
+   #F5F5F5 band: full-colour Vetanoia logo; below it the about text (left), contact lines (middle),
    social icons (right) — text #575757, icons #939393. Then a black credit bar with white text. */
 .pub-footer {
   background: #f5f5f5;
