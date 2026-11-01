@@ -1,4 +1,7 @@
+import { useRef } from 'react'
 import { Link } from 'react-router'
+import { gsap, media, playOnce, useGSAP } from '../../animation/gsap.js'
+import { revealImage } from '../../animation/reveal.js'
 
 // Drop the photo in src/assets/home/ named "explore" (explore.jpg / .webp / .png) — picked up automatically.
 const photos = import.meta.glob('../../assets/home/explore.{jpg,jpeg,webp,png,avif}', { eager: true, query: '?url', import: 'default' })
@@ -16,8 +19,29 @@ const links = [
  * height; photo ≈ 675 × 472 on the right, ending at the content edge.
  */
 export function ExploreLinks() {
+  const ref = useRef(null)
+
+  // The three links slide in one after another from the reading edge; the photo is uncovered beside them.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add(media.ok, () => {
+        const toward = document.documentElement.dir === 'rtl' ? 1 : -1
+        gsap.from('.explore-link', {
+          autoAlpha: 0,
+          x: 40 * toward,
+          duration: 1.1,
+          stagger: 0.14,
+          scrollTrigger: { trigger: ref.current, start: 'top 78%', toggleActions: playOnce },
+        })
+        revealImage(ref.current.querySelector('.explore-links__media'), { start: 'top 78%', delay: 0.2 })
+      })
+    },
+    { scope: ref },
+  )
+
   return (
-    <section className="explore-links" aria-label="Explore Vetanoia">
+    <section ref={ref} className="explore-links" aria-label="Explore Vetanoia">
       <ul className="explore-links__list" role="list">
         {links.map((l) => (
           <li key={l.to}>

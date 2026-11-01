@@ -43,10 +43,10 @@ export const stats = [
 ]
 
 export const founder = {
-  name: 'Joe Frans',
+  name: 'Adam Nassif',
   role: 'Founder & Lead Photographer',
-  heading: 'Hi_I’m Joe Frans',
-  signature: 'Frans _ Founder & Lead Photographer',
+  heading: 'Hi_I’m Adam Nassif',
+  signature: 'Adam _ Founder & Lead Photographer',
   lead: 'I believe great photography begins with loving people and feeling deeply.',
   paragraphs: [
     'My work sits between documentary and artistic storytelling — always guided by emotion, never forced. I’m drawn to the quiet, in-between moments: a glance, a touch, a feeling that might go unnoticed, yet becomes unforgettable.',
@@ -64,16 +64,16 @@ export const family = {
   intro:
     'We’re a tight-knit group at Vetanoia, and we love bringing your ideas to life! With every project, we work together to create something special, all while having fun and making sure you feel right at home.',
   members: [
-    { name: 'Mina Fathy', photo: 'mina-fathy' },
-    { name: 'Fady Khela', photo: 'fady-khela' },
-    { name: 'Lora Nagy', photo: 'lora-nagy' },
-    { name: 'Mina Zarif', photo: 'mina-zarif' },
-    { name: 'Monica Adel', photo: 'monica-adel' },
-    { name: 'Merna Sobhy', photo: 'merna-sobhy' },
-    { name: 'Gina Safwat', photo: 'gina-safwat' },
+    { name: 'Omar Fawzy', photo: 'omar-fawzy' },
+    { name: 'Karim Samy', photo: 'karim-samy' },
+    { name: 'Sara Nabil', photo: 'sara-nabil' },
+    { name: 'Youssef Tarek', photo: 'youssef-tarek' },
+    { name: 'Nour Hany', photo: 'nour-hany' },
+    { name: 'Dina Fouad', photo: 'dina-fouad' },
+    { name: 'Yasmin Adel', photo: 'yasmin-adel' },
   ],
   testimonial: {
-    quote: 'Joe presence added a value to our wedding, every one loved him, the pictures are insane. he is considered one of the family now',
+    quote: 'Adam’s presence added a value to our wedding, every one loved him, the pictures are insane. he is considered one of the family now',
     name: 'Andrew Mansour',
   },
 }
@@ -81,7 +81,7 @@ export const family = {
 // About page testimonial (Figma: quote, script signature, small "NAME · BRIDE" label).
 export const aboutTestimonial = {
   quote:
-    'I had a specific reference which was the vintage film look for the cinematography, and the results exceeds my expectations. Everyone was impressed by how friendly and fun was Joe and his team',
+    'I had a specific reference which was the vintage film look for the cinematography, and the results exceeds my expectations. Everyone was impressed by how friendly and fun was Adam and his team',
   name: 'Mariam Sameh',
   role: 'Bride',
 }

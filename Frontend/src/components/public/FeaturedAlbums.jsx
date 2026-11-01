@@ -1,4 +1,7 @@
+import { useRef } from 'react'
 import { Link } from 'react-router'
+import { gsap, media, ScrollTrigger, useGSAP } from '../../animation/gsap.js'
+import { revealImage, revealUp } from '../../animation/reveal.js'
 import { ResponsiveImage } from '../media/ResponsiveImage.jsx'
 
 function ArrowIcon() {
@@ -18,9 +21,32 @@ function ArrowIcon() {
  * @param {{ albums: { slug: string, title: string, cover: object|null }[] }} props
  */
 export function FeaturedAlbums({ albums }) {
+  const ref = useRef(null)
+
+  // The heading rises in; each album photo is uncovered in turn, a beat after its neighbour.
+  // Albums arrive from the API after the first render, so this re-runs when they do.
+  useGSAP(
+    () => {
+      if (!albums.length) return
+      const mm = gsap.matchMedia()
+      mm.add(media.ok, () => {
+        revealUp('.featured-albums__head > div > *, .featured-albums__cta', { stagger: 0.1 })
+        gsap.utils.toArray('.album-card', ref.current).forEach((card, i) => {
+          revealImage(card.querySelector('.album-card__media'), { start: 'top 88%', delay: (i % 3) * 0.12 })
+        })
+        revealUp('.album-card__caption', { y: 10, stagger: 0.12, start: 'top 95%' })
+      })
+      // The section grew from nothing when the data came in: re-measure every trigger on the page, on the
+      // next frame rather than while this section's own triggers are still being created.
+      const frame = requestAnimationFrame(() => ScrollTrigger.refresh())
+      return () => cancelAnimationFrame(frame)
+    },
+    { scope: ref, dependencies: [albums.length], revertOnUpdate: true },
+  )
+
   if (!albums.length) return null
   return (
-    <section className="featured-albums" aria-labelledby="featured-albums-title">
+    <section ref={ref} className="featured-albums" aria-labelledby="featured-albums-title">
       <header className="featured-albums__head">
         <div>
           <h2 id="featured-albums-title" className="featured-albums__title">

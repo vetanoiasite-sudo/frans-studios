@@ -1,6 +1,9 @@
 import '@fontsource/neuton/300.css'
 import '@fontsource/cormorant-garamond/700.css'
+import { useRef } from 'react'
 import { Link } from 'react-router'
+import { gsap, media, useGSAP } from '../../animation/gsap.js'
+import { revealImage, revealUp } from '../../animation/reveal.js'
 
 // Drop the team photo in src/assets/about/ named "team" (team.jpg / team.webp / team.png).
 // It's picked up automatically; until then a neutral placeholder keeps the layout intact.
@@ -9,8 +12,31 @@ const teamPhoto = Object.values(photos)[0]
 
 /** Home page "Hey, we're Vetanoia" block — Figma: 1200 × 698 grey panel, photo 520 × 615. */
 export function AboutTeaser() {
+  const ref = useRef(null)
+
+  // The photo is uncovered first, then the words follow it in. On desktop the photo also drifts a
+  // little inside its frame while the section scrolls past.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add({ ok: media.ok, desktop: media.desktop }, ({ conditions }) => {
+        if (!conditions.ok) return
+        revealImage(ref.current.querySelector('.about-teaser__media'), { start: 'top 75%' })
+        revealUp('.about-teaser__text > *', { stagger: 0.12, start: 'top 80%' })
+        if (conditions.desktop) {
+          gsap.fromTo(
+            '.about-teaser__media',
+            { yPercent: 6 },
+            { yPercent: -6, ease: 'none', scrollTrigger: { trigger: ref.current, start: 'top bottom', end: 'bottom top', scrub: 0.8 } },
+          )
+        }
+      })
+    },
+    { scope: ref },
+  )
+
   return (
-    <section className="about-teaser" aria-labelledby="about-teaser-title">
+    <section ref={ref} className="about-teaser" aria-labelledby="about-teaser-title">
       <div className="about-teaser__panel">
         <div className="about-teaser__media">
           {teamPhoto ? (
