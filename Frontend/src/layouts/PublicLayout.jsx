@@ -39,9 +39,9 @@ export default function PublicLayout() {
 
   useEffect(() => setMenuOpen(false), [location.pathname])
 
-  // Once the page has scrolled, the header sits over light sections, where the translucent bar reads as grey.
+  // As on fransstudios.com: clear while the page is at the very top, a grey glass bar once it scrolls.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => setScrolled(window.scrollY > 4)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -59,8 +59,9 @@ export default function PublicLayout() {
       <a className="skip-link" href="#main">
         {t('nav.skip')}
       </a>
-      {/* Translucent over a hero photo (as on the live site); solid dark on light pages and once scrolled. */}
-      <header className={overHero && !scrolled && !menuOpen ? 'pub-header' : 'pub-header pub-header--solid'}>
+      {/* Over a hero photo: clear at the top, grey glass once scrolled. Light pages (no photo behind the
+          white logo) and the open phone menu keep the solid dark bar. */}
+      <header className={`pub-header ${!overHero || menuOpen ? 'pub-header--solid' : scrolled ? 'pub-header--scrolled' : 'pub-header--clear'}`}>
         <div className="pub-header__inner">
           <Link to="/" className="pub-logo" aria-label="Vetanoia — home">
             <img className="pub-logo__img" src={logoWhite} width={1974} height={300} alt="" />

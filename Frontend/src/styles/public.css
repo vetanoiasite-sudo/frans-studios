@@ -28,10 +28,30 @@
   z-index: 50;
   color: #fff;
   background: rgb(0 0 0 / 0.31);
-  transition: background-color var(--fast) var(--ease);
+  /* The grey fades in and out as on fransstudios.com (background 0.3s ease there), a touch slower. */
+  transition:
+    background-color 0.4s ease,
+    backdrop-filter 0.4s ease;
 }
 
-/* Light pages and scrolled pages: the 31% bar turns muddy grey over white, so it goes solid. */
+@media (prefers-reduced-motion: reduce) {
+  .pub-header {
+    transition: none;
+  }
+}
+
+/* Top of a page with a hero photo: no bar at all, the photo runs up behind the logo and links.
+   The same grey at zero opacity (not "transparent", which is black), so the fade never darkens on the way. */
+.pub-header--clear {
+  background: rgb(114 114 114 / 0);
+}
+
+/* Scrolled: the exact grey of the fransstudios.com sticky header (rgba(114, 114, 114, 0.5)), no blur. */
+.pub-header--scrolled {
+  background: rgb(114 114 114 / 0.5);
+}
+
+/* Light pages (nothing dark behind the white logo) and the open phone menu. */
 .pub-header--solid {
   background: rgb(20 20 20 / 0.94);
   backdrop-filter: blur(8px);
