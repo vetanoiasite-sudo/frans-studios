@@ -53,6 +53,7 @@ public sealed record InquiryRequest(
 [Route("api/public")]
 public sealed class PublicController(
     AppDbContext db,
+    PublicMediaStore store,
     EmailDispatcher email,
     IOptions<EmailOptions> emailOptions,
     IOptions<SiteOptions> site) : ControllerBase
@@ -105,22 +106,23 @@ public sealed class PublicController(
 
     /// <summary>
     /// The Portfolio wall: every photo of every published album, in album order (Admin → Portfolio sort order)
-    /// then photo order. Paged so the page can load more as the visitor scrolls.
+    /// then photo order. Paged so the page can load more as the visitor scrolls. Photos whose files are
+    /// missing (database copied without its media folder) are skipped, so the wall never shows broken images.
     /// </summary>
     [HttpGet("portfolio")]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
     public async Task<Paged<PortfolioImageDto>> Portfolio(int page = 1, int pageSize = 60, CancellationToken ct = default)
     {
         (page, pageSize) = ApiHelpers.Clamp(page, pageSize, 120);
-        var q = db.PublicImages.AsNoTracking().Where(i => i.Gallery.IsPublished);
-        var total = await q.CountAsync(ct);
-        var rows = await q
+        // A studio portfolio is a few hundred photos, so filtering on disk before paging stays cheap.
+        var rows = (await db.PublicImages.AsNoTracking().Where(i => i.Gallery.IsPublished)
             .OrderBy(i => i.Gallery.SortOrder).ThenBy(i => i.GalleryId).ThenBy(i => i.SortOrder).ThenBy(i => i.Id)
-            .Skip((page - 1) * pageSize).Take(pageSize)
             .Select(i => new { i.Id, i.Image, i.AltText, i.Gallery.Slug, i.Gallery.Title })
-            .ToListAsync(ct);
-        var items = rows.Select(r => new PortfolioImageDto(ImageDto.From(r.Image, AltOr(r.AltText, $"{r.Title} — wedding photography by Vetanoia"), r.Id), r.Slug, r.Title)).ToList();
-        return new Paged<PortfolioImageDto>(items, total, page, pageSize);
+            .ToListAsync(ct))
+            .Where(r => store.Exists(r.Image.Key)).ToList();
+        var items = rows.Skip((page - 1) * pageSize).Take(pageSize)
+            .Select(r => new PortfolioImageDto(ImageDto.From(r.Image, AltOr(r.AltText, $"{r.Title} — wedding photography by Vetanoia"), r.Id), r.Slug, r.Title)).ToList();
+        return new Paged<PortfolioImageDto>(items, rows.Count, page, pageSize);
     }
 
     [HttpGet("films")]
@@ -147,7 +149,9 @@ public sealed class PublicController(
     public async Task<IReadOnlyDictionary<string, ImageDto>> PageCovers(CancellationToken ct)
     {
         var covers = await db.PageCovers.AsNoTracking().ToListAsync(ct);
-        return covers.ToDictionary(c => c.Page, c => ImageDto.From(c.Image, ""));
+        // A cover whose files are missing (database copied without its media folder) is left out, so the
+        // page shows its built-in photo instead of a broken image.
+        return covers.Where(c => store.Exists(c.Image.Key)).ToDictionary(c => c.Page, c => ImageDto.From(c.Image, ""));
     }
 
     [HttpPost("inquiries")]

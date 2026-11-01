@@ -108,6 +108,17 @@ public sealed class PublicMediaStore(IOptions<StorageOptions> options, ILogger<P
         return (key, new FileInfo(path).Length);
     }
 
+    /// <summary>
+    /// Whether the files behind a key are on disk. A database restored without its media folder still
+    /// points at keys whose files are gone; callers use this to fall back instead of serving broken images.
+    /// </summary>
+    public bool Exists(string? key)
+    {
+        if (string.IsNullOrEmpty(key)) return false;
+        var path = FullPath(key);
+        return Directory.Exists(path) || File.Exists(path);
+    }
+
     public void TryDelete(string? key)
     {
         if (string.IsNullOrEmpty(key)) return;

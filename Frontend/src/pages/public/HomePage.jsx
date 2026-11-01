@@ -2,7 +2,8 @@ import '@fontsource/cormorant-garamond/500-italic.css'
 import '@fontsource/cormorant-garamond/700.css'
 import { useRef } from 'react'
 import { Link } from 'react-router'
-import { useApi } from '../../hooks/useApi.js'
+import { useFilms } from '../../hooks/useFilms.js'
+import { useStories } from '../../hooks/useStories.js'
 import { usePageTitle } from '../../hooks/usePageTitle.js'
 import { HeroCarousel } from '../../components/public/HeroCarousel.jsx'
 import { AboutTeaser } from '../../components/public/AboutTeaser.jsx'
@@ -26,8 +27,8 @@ const heroPhotos = [
 
 export default function HomePage() {
   usePageTitle('Vetanoia — Wedding Photography & Cinematography')
-  const { data: galleries } = useApi('/api/public/galleries')
-  const { data: films } = useApi('/api/public/films')
+  const { data: galleries } = useStories()
+  const { data: films } = useFilms()
 
   // Albums marked "Featured" in Admin → Portfolio (in their sort order); otherwise the latest published ones.
   const featured = galleries?.filter((g) => g.isFeatured) ?? []

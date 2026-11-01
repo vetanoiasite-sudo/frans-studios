@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../../services/api.js'
-import { useApi } from '../../hooks/useApi.js'
+import { defaultWall, useStories } from '../../hooks/useStories.js'
 import { usePageTitle } from '../../hooks/usePageTitle.js'
 import { largestSrc, ResponsiveImage } from '../../components/media/ResponsiveImage.jsx'
 import { Lightbox } from '../../components/media/Lightbox.jsx'
@@ -10,9 +10,9 @@ import { t } from '../../i18n/index.js'
 
 const PAGE_SIZE = 60
 
-/** 3 columns on desktop, 2 on tablets, 1 on phones (kept in sync with the window size). */
+/** 3 columns on desktop, 2 on tablets and phones (kept in sync with the window size). */
 function useColumnCount() {
-  const get = () => (window.matchMedia('(min-width: 900px)').matches ? 3 : window.matchMedia('(min-width: 560px)').matches ? 2 : 1)
+  const get = () => (window.matchMedia('(min-width: 900px)').matches ? 3 : 2)
   const [count, setCount] = useState(get)
   useEffect(() => {
     const onResize = () => setCount(get())
@@ -102,7 +102,7 @@ function PortfolioTabs({ storyCount, photoCount, galleryRef }) {
  */
 export default function PortfolioPage() {
   usePageTitle('Portfolio')
-  const { data: stories } = useApi('/api/public/galleries')
+  const { data: stories } = useStories()
   const [state, setState] = useState({ items: [], total: null, page: 0, loading: false, error: null })
   const [viewer, setViewer] = useState(-1)
   const busy = useRef(false)
@@ -116,9 +116,12 @@ export default function PortfolioPage() {
     try {
       const page = state.page + 1
       const data = await api('/api/public/portfolio', { query: { page, pageSize: PAGE_SIZE } })
-      setState((s) => ({ items: [...s.items, ...data.items], total: data.total, page, loading: false, error: null }))
+      // Nothing published in Admin → Portfolio yet: show the built-in photos instead of an empty wall.
+      if (page === 1 && data.total === 0) setState({ items: defaultWall, total: defaultWall.length, page, loading: false, error: null })
+      else setState((s) => ({ items: [...s.items, ...data.items], total: data.total, page, loading: false, error: null }))
     } catch (error) {
-      setState((s) => ({ ...s, loading: false, error }))
+      if (state.page === 0) setState({ items: defaultWall, total: defaultWall.length, page: 1, loading: false, error: null })
+      else setState((s) => ({ ...s, loading: false, error }))
     } finally {
       busy.current = false
     }
@@ -170,7 +173,7 @@ export default function PortfolioPage() {
             {col.map((p) => (
               <WallItem key={p.image.id} delay={c * 120}>
                 <button type="button" className="portfolio-wall__btn" onClick={() => setViewer(p.index)} aria-label={`${p.image.alt} — open full screen`}>
-                  <ResponsiveImage image={p.image} sizes="(min-width: 900px) 33vw, (min-width: 560px) 50vw, 100vw" priority={p.index < 3} />
+                  <ResponsiveImage image={p.image} sizes="(min-width: 900px) 33vw, 50vw" priority={p.index < 3} />
                 </button>
               </WallItem>
             ))}

@@ -28,6 +28,13 @@
   z-index: 50;
   color: #fff;
   background: rgb(0 0 0 / 0.31);
+  transition: background-color var(--fast) var(--ease);
+}
+
+/* Light pages and scrolled pages: the 31% bar turns muddy grey over white, so it goes solid. */
+.pub-header--solid {
+  background: rgb(20 20 20 / 0.94);
+  backdrop-filter: blur(8px);
 }
 
 .pub-header__inner {
@@ -503,6 +510,7 @@
 
 .about-teaser__panel {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* keeps the photo inside the panel on phones */
   max-width: 1200px;
   margin-inline: auto;
   background: #f5f5f5;
@@ -1353,13 +1361,14 @@
 .portfolio-wall__grid {
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
-  gap: 16px;
+  gap: clamp(8px, 1.6vw, 16px);
   align-items: start;
+  padding-inline: clamp(8px, 1.6vw, 0px); /* a small margin on phones, edge to edge on desktop */
 }
 
 .portfolio-wall__col {
   display: grid;
-  gap: 16px;
+  gap: clamp(8px, 1.6vw, 16px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1442,18 +1451,13 @@
   color: var(--muted);
 }
 
+/* Two columns from the smallest phones, so a story reads as a gallery rather than one long scroll. */
 .masonry {
-  columns: 1;
+  columns: 2;
   column-gap: clamp(0.5rem, 1.2vw, 1rem);
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-@media (min-width: 640px) {
-  .masonry {
-    columns: 2;
-  }
 }
 
 @media (min-width: 1100px) {
@@ -1709,25 +1713,20 @@
   padding: clamp(64px, 7.8vw, 112px) var(--gutter);
 }
 
+/* Two portraits per row on phones and tablets (one per row made the team a very long scroll). */
 .family__grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 3vw, 24px);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-@media (min-width: 600px) {
-  .family__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* Intro and testimonial span the full width when there are only two columns. */
-  .family__intro,
-  .family__quote {
-    grid-column: 1 / -1;
-  }
+/* Intro and testimonial span the full width when there are only two columns. */
+.family__intro,
+.family__quote {
+  grid-column: 1 / -1;
 }
 
 @media (min-width: 960px) {
@@ -1810,11 +1809,11 @@
 
 .family__name {
   position: absolute;
-  inset-inline-start: 30px;
-  inset-block-end: 26px;
+  inset-inline-start: clamp(12px, 4vw, 30px);
+  inset-block-end: clamp(10px, 3.5vw, 26px);
   z-index: 1;
   font-family: 'Cormorant Garamond', var(--serif);
-  font-size: 1.25rem; /* 20px */
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem); /* 20px on desktop */
   font-weight: 500;
   color: #fff;
 }

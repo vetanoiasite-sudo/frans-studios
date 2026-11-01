@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useApi } from '../../hooks/useApi.js'
+import { defaultStory } from '../../hooks/useStories.js'
 import { usePageTitle } from '../../hooks/usePageTitle.js'
 import { largestSrc, ResponsiveImage } from '../../components/media/ResponsiveImage.jsx'
 import { Lightbox } from '../../components/media/Lightbox.jsx'
@@ -11,11 +12,15 @@ import { t } from '../../i18n/index.js'
 
 export default function GalleryPage() {
   const { slug } = useParams()
-  const { data: g, error, loading, reload } = useApi(`/api/public/galleries/${encodeURIComponent(slug)}`)
+  const { data, error: apiError, loading, reload } = useApi(`/api/public/galleries/${encodeURIComponent(slug)}`)
+  // Not published in Admin → Portfolio: fall back to the built-in story with that slug, if there is one.
+  const builtin = apiError ? defaultStory(slug) : null
+  const g = data ?? builtin
+  const error = builtin ? null : apiError
   const [index, setIndex] = useState(-1)
   usePageTitle(g?.title)
 
-  if (loading) return <Spinner />
+  if (loading && !g) return <Spinner />
   if (error?.status === 404) return <NotFoundPage />
   if (error) return <ErrorState error={error} onRetry={reload} />
   if (!g) return null
@@ -37,7 +42,7 @@ export default function GalleryPage() {
         {g.images.map((img, i) => (
           <li key={img.id ?? i} className="masonry__item">
             <button type="button" className="masonry__btn" onClick={() => setIndex(i)} aria-label={`${img.alt} — open full screen`}>
-              <ResponsiveImage image={img} sizes="(min-width: 1100px) 33vw, (min-width: 640px) 50vw, 100vw" priority={i < 2} />
+              <ResponsiveImage image={img} sizes="(min-width: 1100px) 33vw, 50vw" priority={i < 2} />
             </button>
           </li>
         ))}

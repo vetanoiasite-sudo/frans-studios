@@ -35,8 +35,17 @@ export default function PublicLayout() {
   // Pages whose top is a full-bleed photo: the header starts transparent over it.
   const overHero = ['/', '/about', '/packages', '/contact'].includes(location.pathname.replace(/\/$/, '') || '/')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => setMenuOpen(false), [location.pathname])
+
+  // Once the page has scrolled, the header sits over light sections, where the translucent bar reads as grey.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
@@ -50,8 +59,8 @@ export default function PublicLayout() {
       <a className="skip-link" href="#main">
         {t('nav.skip')}
       </a>
-      {/* Same translucent dark bar on every page, as on the live site. */}
-      <header className="pub-header">
+      {/* Translucent over a hero photo (as on the live site); solid dark on light pages and once scrolled. */}
+      <header className={overHero && !scrolled && !menuOpen ? 'pub-header' : 'pub-header pub-header--solid'}>
         <div className="pub-header__inner">
           <Link to="/" className="pub-logo" aria-label="Vetanoia — home">
             <img className="pub-logo__img" src={logoWhite} width={1974} height={300} alt="" />

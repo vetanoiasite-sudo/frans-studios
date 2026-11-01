@@ -1,9 +1,8 @@
 import { useRef } from 'react'
-import { useApi } from '../../hooks/useApi.js'
+import { useFilms } from '../../hooks/useFilms.js'
 import { usePageTitle } from '../../hooks/usePageTitle.js'
 import { VideoTile } from '../../components/media/VideoTile.jsx'
-import { ErrorState, Spinner } from '../../components/ui/Spinner.jsx'
-import { t } from '../../i18n/index.js'
+import { Spinner } from '../../components/ui/Spinner.jsx'
 import { gsap, media, ScrollTrigger, useGSAP } from '../../animation/gsap.js'
 import { revealImage, revealUp } from '../../animation/reveal.js'
 
@@ -22,7 +21,8 @@ function Film({ film }) {
 
 export default function FilmsPage() {
   usePageTitle('Wedding Films')
-  const { data, error, loading, reload } = useApi('/api/public/films')
+  // Admin → Films when any are published, otherwise the built-in films (never an empty page).
+  const { data, loading } = useFilms()
   const ref = useRef(null)
   const count = data?.length ?? 0
 
@@ -63,8 +63,6 @@ export default function FilmsPage() {
         <p className="page-head__lead">Through the lens of cinematic artistry we craft films that narrate your love story.</p>
       </header>
       {loading && <Spinner />}
-      {error && <ErrorState error={error} onRetry={reload} />}
-      {data?.length === 0 && <p className="empty-note">{t('films.empty')}</p>}
       <div className="film-list">{data?.map((f) => <Film key={f.id} film={f} />)}</div>
     </div>
   )
